@@ -12,7 +12,7 @@ export default {
           <li 
             @click="$router.push({ name: 'home' })"
             class="pointer">
-            <a class="nav-link text-white">Заметки</a>
+            <a class="nav-link text-white" style="font-size: 1.4em">Заметки</a>
           </li>
         </ul>
 
