@@ -1,9 +1,20 @@
 <script>
 import Navbar from '@/components/Navbar.vue'
+import storageMixin from '@/mixins/storageMixin'
 
 export default {
+  mixins: [
+    storageMixin
+  ],
+
   components: {
     Navbar
+  },
+
+  mounted() {
+    if (this.getAccessToken() === null) {
+      this.$router.push({ name: 'sign-in' })
+    }
   }
 }
 </script>

@@ -1,7 +1,7 @@
 export default {
     methods: {
-        getToken() {
-            return localStorage.getItem('token')
+        getAccessToken() {
+            return localStorage.getItem('access_token')
         },
     }
 }

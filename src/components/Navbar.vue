@@ -1,6 +1,10 @@
 <script>
-export default {
+import storageMixin from '@/mixins/storageMixin'
 
+export default {
+  mixins: [
+    storageMixin
+  ],
 }
 </script>
 
@@ -16,28 +20,27 @@ export default {
           </li>
         </ul>
 
-        <!-- <div v-if="getToken() !== null" class="px-3">
+        <div v-if="getAccessToken() !== null" class="px-3">
           Имя пользователя
-        </div> -->
+        </div>
         <div class="text-end">
-            <!-- v-if="getToken() !== null" -->
-          <button
-            
+            <button
+            v-if="getAccessToken() !== null"
             @click="logout"
             type="button"
             class="btn btn-outline-light me-2">
             Выйти
           </button>
           <button
-            v-if="$route.name === 'signin'"
-            @click="$router.push({ name: 'signup' })"
+            v-if="$route.name === 'sign-in'"
+            @click="$router.push({ name: 'sign-up' })"
             type="button"
             class="btn btn-warning">
             Зарегистрироваться
           </button>
           <button
             v-if="$route.name === 'signup'"
-            @click="$router.push({ name: 'signin' })"
+            @click="$router.push({ name: 'sign-in' })"
             type="button"
             class="btn btn-warning">
             Войти
