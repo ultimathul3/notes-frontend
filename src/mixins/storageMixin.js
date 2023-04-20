@@ -9,5 +9,15 @@ export default {
         getLogin() {
             return localStorage.getItem('login')
         },
+        getRefreshToken() {
+            return localStorage.getItem('refresh_token')
+        },
+        setTokens(accessToken, refreshToken) {
+            localStorage.setItem("access_token", accessToken)
+            localStorage.setItem("refresh_token", refreshToken)
+        },
+        deleteAll() {
+            localStorage.clear()
+        }
     }
 }

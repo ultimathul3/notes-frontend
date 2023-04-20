@@ -1,10 +1,30 @@
 <script>
 import storageMixin from '@/mixins/storageMixin'
+import tokensMixin from '@/mixins/tokensMixin'
+import { logout } from '../../api/auth.js'
 
 export default {
   mixins: [
-    storageMixin
+    storageMixin,
+    tokensMixin,
   ],
+
+  methods: {
+    async logout() {
+      if (await !this.refreshTokens()) {
+        return
+      }
+
+      try {
+        await logout(this.getAccessToken(), this.getRefreshToken())
+      } catch (error) {
+        return
+      }
+
+      this.deleteAll()
+      this.$router.push({ name: 'sign-in' })
+    }
+  }
 }
 </script>
 
@@ -24,15 +44,15 @@ export default {
           <div class="dropdown">
             <button
               v-if="getAccessToken() !== null"
-              @click="logout"
               type="button"
               class="btn btn-outline-light dropdown-toggle me-2"
               data-bs-toggle="dropdown">
               <i class="bi bi-person"></i> {{ getName() }} ({{ getLogin() }})
             </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item">Уведомления</a></li>
-              <li><a class="dropdown-item">Выйти</a></li>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><button class="dropdown-item pointer" type="button">Уведомления</button></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><button class="dropdown-item pointer" type="button" @click="logout">Выйти</button></li>
             </ul>
           </div>
           
