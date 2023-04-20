@@ -148,12 +148,10 @@ export default {
                 return
             }
             
-            localStorage.setItem('id', response.data.id)
-            localStorage.setItem('name', this.name)
-            localStorage.setItem('login', this.login)
-            localStorage.setItem('access_token', response.data.access_token)
-            // must be in http only cookie :)
-            localStorage.setItem('refresh_token', response.data.refresh_token)
+            this.setID(response.data.id)
+            this.setName(this.name)
+            this.setLogin(this.login)
+            this.setTokens(response.data.access_token, response.data.rerfesh_token)
 
             this.$router.push({ name: 'home' })
         }
