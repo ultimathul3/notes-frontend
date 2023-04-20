@@ -1,3 +1,57 @@
+<script>
+import axios from 'axios'
+import { signIn } from '../../api/auth.js'
+
+export default {
+    data() {
+        return {
+            login: '',
+            password: '',
+            loginInvalid: false,
+            passwordInvalid: false,
+            errors: []
+        }
+    },
+    methods: {
+        async signIn() {
+            let isValid = true
+            if (this.login == '') {
+                this.loginInvalid = true
+                isValid = false
+            }
+            if (this.password == '') {
+                this.passwordInvalid = true
+                isValid = false
+            }
+            if (!isValid) {
+                return
+            }
+            
+            let response
+            try {
+                response = await signIn(this.login, this.password)
+            } catch (error) {
+                if (error.response.data.message.includes('invalid login or password')) {
+                    this.errors = ['Неверный логин или пароль']
+                }
+                return
+            }
+
+            this.setID(response.data.id)
+            this.setName(response.data.name)
+            this.setLogin(this.login)
+            this.setTokens(response.data.access_token, response.data.rerfesh_token)
+
+            this.$router.push({ name: 'home' })
+        }
+    },
+    mounted() {
+        document.title = 'Вход'
+    }
+}
+</script>
+
+
 <template>
     <div class="container mt-5">
         <div class="row text-center mb-1">
@@ -40,63 +94,9 @@
                             Введите пароль
                         </div>
                     </div>
-                    <button @click.prevent="signin" class="btn btn-primary">Войти</button>
+                    <button @click.prevent="signIn" class="btn btn-primary">Войти</button>
                 </form>
             </div>
         </div>
     </div>
 </template>
-
-
-<script>
-import axios from 'axios'
-import { signIn } from '../../api/auth.js'
-
-export default {
-    data() {
-        return {
-            login: '',
-            password: '',
-            loginInvalid: false,
-            passwordInvalid: false,
-            errors: []
-        }
-    },
-    methods: {
-        async signin() {
-            let isValid = true
-            if (this.login == '') {
-                this.loginInvalid = true
-                isValid = false
-            }
-            if (this.password == '') {
-                this.passwordInvalid = true
-                isValid = false
-            }
-            if (!isValid) {
-                return
-            }
-            
-            let response
-            try {
-                response = await signIn(this.login, this.password)
-            } catch (error) {
-                if (error.response.data.message.includes('invalid login or password')) {
-                    this.errors = ['Неверный логин или пароль']
-                }
-                return
-            }
-
-            this.setID(response.data.id)
-            this.setName(response.data.name)
-            this.setLogin(this.login)
-            this.setTokens(response.data.access_token, response.data.rerfesh_token)
-
-            this.$router.push({ name: 'home' })
-        }
-    },
-    mounted() {
-        document.title = 'Вход'
-    }
-}
-</script>
