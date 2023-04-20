@@ -20,17 +20,22 @@ export default {
           </li>
         </ul>
 
-        <div v-if="getAccessToken() !== null" class="px-3">
-          Имя пользователя
-        </div>
         <div class="text-end">
+          <div class="dropdown">
             <button
-            v-if="getAccessToken() !== null"
-            @click="logout"
-            type="button"
-            class="btn btn-outline-light me-2">
-            Выйти
-          </button>
+              v-if="getAccessToken() !== null"
+              @click="logout"
+              type="button"
+              class="btn btn-outline-light dropdown-toggle me-2"
+              data-bs-toggle="dropdown">
+              <i class="bi bi-person"></i> {{ getName() }} ({{ getLogin() }})
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item">Уведомления</a></li>
+              <li><a class="dropdown-item">Выйти</a></li>
+            </ul>
+          </div>
+          
           <button
             v-if="$route.name === 'sign-in'"
             @click="$router.push({ name: 'sign-up' })"
@@ -39,7 +44,7 @@ export default {
             Зарегистрироваться
           </button>
           <button
-            v-if="$route.name === 'signup'"
+            v-if="$route.name === 'sign-up'"
             @click="$router.push({ name: 'sign-in' })"
             type="button"
             class="btn btn-warning">
