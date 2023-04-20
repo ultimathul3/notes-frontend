@@ -50,6 +50,8 @@
 
 <script>
 import axios from 'axios'
+import { signIn } from '../../api/auth.js'
+
 export default {
     data() {
         return {
@@ -74,9 +76,23 @@ export default {
             if (!isValid) {
                 return
             }
-                
-            // TODO: signin
-            // localStorage.setItem('access_token', accessToken)
+            
+            let response
+            try {
+                response = await signIn(this.login, this.password)
+            } catch (error) {
+                if (error.response.data.message.includes('invalid login or password')) {
+                    this.errors = ['Неверный логин или пароль']
+                }
+                return
+            }
+
+            localStorage.setItem('id', response.data.id)
+            localStorage.setItem('name', response.data.name)
+            localStorage.setItem('login', this.login)
+            localStorage.setItem('access_token', response.data.access_token)
+            // must be in http only cookie :)
+            localStorage.setItem('refresh_token', response.data.refresh_token)
 
             this.$router.push({ name: 'home' })
         }
