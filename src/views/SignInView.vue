@@ -1,8 +1,13 @@
 <script>
 import axios from 'axios'
 import { signIn } from '../../api/auth.js'
+import storageMixin from '@/mixins/storageMixin'
 
 export default {
+    mixins: [
+        storageMixin,
+    ],
+
     data() {
         return {
             login: '',
@@ -40,7 +45,7 @@ export default {
             this.setID(response.data.id)
             this.setName(response.data.name)
             this.setLogin(this.login)
-            this.setTokens(response.data.access_token, response.data.rerfesh_token)
+            this.setTokens(response.data.access_token, response.data.refresh_token)
 
             this.$router.push({ name: 'home' })
         }
