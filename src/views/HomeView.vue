@@ -3,7 +3,7 @@ import Accordion from '@/components/Accordion.vue'
 import Modal from '@/components/Modal.vue'
 import storageMixin from '@/mixins/storageMixin'
 import tokensMixin from '@/mixins/tokensMixin'
-import { getNotebooks, createNotebook, deleteNotebook } from '../../api/notebooks.js'
+import { getNotebooks, createNotebook, deleteNotebook, updateNotebook } from '../../api/notebooks.js'
 import { getNotes } from '../../api/notes.js'
 
 export default {
@@ -88,12 +88,38 @@ export default {
             }
             this.notebooks = this.notebooks.filter((n) => {return n.id != notebookID})
             document.getElementById('deleteNotebookModal-close-btn').click()
-        }
+        },
+    
+        async updateNotebook(notebookID) {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
+                return
+            }
+
+            let response
+            try {
+                response = await updateNotebook(this.getAccessToken(), notebookID, this.modalInput)
+            } catch(error) {
+                this.errors = ['Название блокнота должно быть от 1 до 64 символов']
+                return
+            }
+            let notebook = this.notebooks.find(n => n.id === this.selectedNotebookID)
+            notebook.description = this.modalInput
+            document.getElementById('updateNotebookModal-close-btn').click()
+            this.modalInput = ''
+        },
     },
 
     mounted() {
         document.title = 'Главная страница'
         this.getNotebooks()
+    },
+
+    watch: {
+        selectedNotebookID() {
+            let notebook = this.notebooks.find(n => n.id === this.selectedNotebookID)
+            this.modalInput = notebook.description
+        }
     }
 }
 </script>
@@ -129,6 +155,27 @@ export default {
             placeholder="Название блокнота">
     </modal>
 
+    <modal
+        @btnPressed="updateNotebook(selectedNotebookID)"
+        :id="'updateNotebookModal'"
+        :title="'Редактирование блокнота'"
+        :buttonText="'Редактировать'">
+        <ul class="list-group">
+            <li
+                v-for="(error, index) in errors" 
+                :class="{'mb-3': index == errors.length-1}"
+                class="list-group-item list-group-item-danger">
+                {{ error }}
+            </li>
+        </ul>
+        <input
+            v-model="modalInput"
+            @input="inputInvalid = false"
+            :class="{'is-invalid': inputInvalid}"
+            type="text" 
+            class="form-control" 
+            placeholder="Название блокнота">
+    </modal>
 
     <div class="container mt-5">
         <div class="row">

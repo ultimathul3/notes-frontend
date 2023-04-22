@@ -26,3 +26,13 @@ export function deleteNotebook(accessToken, id) {
         }
     })
 }
+
+export function updateNotebook(accessToken, id, description) {
+    return axios.put(`${API_URL}/notebooks/${id}`, {
+        'description': description
+    }, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+}

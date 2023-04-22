@@ -24,9 +24,9 @@ export default {
                 </button>
             </h2>
             
-            <div :id="'collapse'+notebook.id" class="accordion-collapse collapse">
+            <div :id="`collapse${notebook.id}`" class="accordion-collapse collapse">
                 <ul v-for="note in notebook.notes" :key="note.id" class="list-group m-2">
-                    <li class="list-group-item list-group-item-action" style="text-align:left;">
+                    <li class="list-group-item list-group-item-action list-note" style="text-align:left;">
                         {{ note.title }} <span style="float:right;"><i class="bi bi-pencil pointer"></i> <i class="bi bi-x-circle pointer"></i></span>
                     </li>
                 </ul>
@@ -46,7 +46,9 @@ export default {
                             </button>
                         </div>
                         <div class="col">
-                            <button type="button" class="btn btn-info">
+                            <button @click="$emit('update:selectedNotebookID', notebook.id)" type="button" class="btn btn-info"
+                                data-bs-toggle="modal"
+                                data-bs-target="#updateNotebookModal">
                                 <i class="bi bi-pencil pointer"></i>
                             </button>
                         </div>
@@ -64,3 +66,10 @@ export default {
         </div>
     </div>
 </template>
+
+
+<style scoped>
+.list-note {
+  border: var(--bs-list-group-border-width) solid #13653f;
+}
+</style>
