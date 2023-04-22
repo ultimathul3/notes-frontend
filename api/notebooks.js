@@ -8,3 +8,13 @@ export function getNotebooks(accessToken) {
         }
     })
 }
+
+export function createNotebook(accessToken, description) {
+    return axios.post(`${API_URL}/notebooks/`, {
+        'description': description
+    }, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+}

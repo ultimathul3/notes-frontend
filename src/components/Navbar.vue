@@ -75,10 +75,3 @@ export default {
     </div>
   </header>
 </template>
-
-
-<style scoped>
-.pointer {
-  cursor: pointer;
-}
-</style>

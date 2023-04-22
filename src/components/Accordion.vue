@@ -20,7 +20,7 @@ export default {
             <div :id="'collapse'+notebook.id" class="accordion-collapse collapse">
                 <ul v-for="note in notebook.notes" :key="note.id" class="list-group m-2">
                     <li class="list-group-item list-group-item-action">
-                        {{ note.title }}&emsp;<i class="bi bi-pencil text-end"></i> <i class="bi bi-x-circle">    
+                        {{ note.title }}&emsp;<i class="bi bi-pencil pointer"></i> <i class="bi bi-x-circle pointer">    
                     </i></li>
                 </ul>
             </div>

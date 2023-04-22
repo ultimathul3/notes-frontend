@@ -25,3 +25,9 @@ export default {
     <router-view></router-view>
   </div>
 </template>
+
+<style>
+  .pointer {
+    cursor: pointer;
+  }
+</style>
