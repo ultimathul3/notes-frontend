@@ -71,7 +71,6 @@ export default {
                 description: this.modalInput
             })
             document.getElementById('createNotebookModal-close-btn').click()
-            this.modalInput = ''
         },
 
         async deleteNotebook(notebookID) {
@@ -103,23 +102,21 @@ export default {
                 this.errors = ['Название блокнота должно быть от 1 до 64 символов']
                 return
             }
-            let notebook = this.notebooks.find(n => n.id === this.selectedNotebookID)
+            let notebook = this.notebooks.find(n => n.id === notebookID)
             notebook.description = this.modalInput
             document.getElementById('updateNotebookModal-close-btn').click()
-            this.modalInput = ''
         },
+    
+        updateSelectedNotebookID(id) {
+            this.selectedNotebookID = id
+            let notebook = this.notebooks.find(n => n.id === id)
+            this.modalInput = notebook.description
+        }
     },
 
     mounted() {
         document.title = 'Главная страница'
         this.getNotebooks()
-    },
-
-    watch: {
-        selectedNotebookID() {
-            let notebook = this.notebooks.find(n => n.id === this.selectedNotebookID)
-            this.modalInput = notebook.description
-        }
     }
 }
 </script>
@@ -183,11 +180,10 @@ export default {
                 <input class="form-control mb-2" placeholder="Поиск...">
                 <accordion 
                     :notebooks="notebooks"
-                    v-model:selectedNotebookID="selectedNotebookID"
-                    @deleteNotebook="deleteNotebook"/>
+                    @updateSelectedNotebookID="updateSelectedNotebookID"/>
 
                 <div class="row justify-content-center mt-2">
-                    <button type="button" class="btn btn-success"
+                    <button @click="modalInput=''" type="button" class="btn btn-success"
                         style="width: 10em;" data-bs-toggle="modal"
                         data-bs-target="#createNotebookModal">
                         Создать блокнот

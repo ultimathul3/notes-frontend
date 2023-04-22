@@ -7,6 +7,10 @@ export default {
         selectedNotebookID: Number
     },
 
+    emits: [
+        'updateSelectedNotebookID'
+    ],
+
     components: {
         Modal
     }
@@ -46,14 +50,14 @@ export default {
                             </button>
                         </div>
                         <div class="col">
-                            <button @click="$emit('update:selectedNotebookID', notebook.id)" type="button" class="btn btn-info"
+                            <button @click="$emit('updateSelectedNotebookID', notebook.id)" type="button" class="btn btn-info"
                                 data-bs-toggle="modal"
                                 data-bs-target="#updateNotebookModal">
                                 <i class="bi bi-pencil pointer"></i>
                             </button>
                         </div>
                         <div class="col">
-                            <button @click="$emit('update:selectedNotebookID', notebook.id)" type="button" class="btn btn-danger"
+                            <button @click="$emit('updateSelectedNotebookID', notebook.id)" type="button" class="btn btn-danger"
                                 data-bs-toggle="modal"
                                 data-bs-target="#deleteNotebookModal">
                                 <i class="bi bi-x-circle pointer"></i>
