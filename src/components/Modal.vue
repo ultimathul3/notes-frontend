@@ -23,7 +23,7 @@
                     <slot></slot>
                 </div>
                 <div class="modal-footer">
-                    <button id="modal-close-btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button :id="`${id}-close-btn`" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
                     <button @click="$emit('btnPressed')" type="button" class="btn btn-primary">{{ buttonText }}</button>
                 </div>
             </div>

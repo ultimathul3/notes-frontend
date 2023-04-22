@@ -3,7 +3,7 @@ import Accordion from '@/components/Accordion.vue'
 import Modal from '@/components/Modal.vue'
 import storageMixin from '@/mixins/storageMixin'
 import tokensMixin from '@/mixins/tokensMixin'
-import { getNotebooks, createNotebook } from '../../api/notebooks.js'
+import { getNotebooks, createNotebook, deleteNotebook } from '../../api/notebooks.js'
 import { getNotes } from '../../api/notes.js'
 
 export default {
@@ -23,14 +23,17 @@ export default {
             errors: [],
             inputInvalid: false,
             modalInput: '',
+            selectedNotebookID: 0,
         }
     },
 
     methods: {
         async getNotebooks() {
-            if (await !this.refreshTokens()) {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
                 return
-            }        
+            }      
+
             let response
             try {
                 response = await getNotebooks(this.getAccessToken())
@@ -51,9 +54,11 @@ export default {
         },
 
         async createNotebook() {
-            if (await !this.refreshTokens()) {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
                 return
-            }        
+            }
+
             let response
             try {
                 response = await createNotebook(this.getAccessToken(), this.modalInput)
@@ -62,14 +67,32 @@ export default {
                 return
             }
             this.notebooks.push({
+                id: response.data.id,
                 description: this.modalInput
             })
-            document.getElementById('modal-close-btn').click()
+            document.getElementById('createNotebookModal-close-btn').click()
             this.modalInput = ''
+        },
+
+        async deleteNotebook(notebookID) {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
+                return
+            }
+
+            let response
+            try {
+                response = await deleteNotebook(this.getAccessToken(), notebookID)
+            } catch(error) {
+                return
+            }
+            this.notebooks = this.notebooks.filter((n) => {return n.id != notebookID})
+            document.getElementById('deleteNotebookModal-close-btn').click()
         }
     },
 
     mounted() {
+        document.title = 'Главная страница'
         this.getNotebooks()
     }
 }
@@ -77,8 +100,16 @@ export default {
 
 <template>
     <modal
+        @btnPressed="deleteNotebook(selectedNotebookID)"
+        :id="'deleteNotebookModal'"
+        :title="'Удаление блокнота'"
+        :buttonText="'Удалить'">
+        Содержимое блокнота также будет удалено. Вы хотите продолжить?
+    </modal>
+
+    <modal
         @btnPressed="createNotebook"
-        :id="'createNotebokModal'"
+        :id="'createNotebookModal'"
         :title="'Создание блокнота'"
         :buttonText="'Создать'">
         <ul class="list-group">
@@ -96,22 +127,22 @@ export default {
             type="text" 
             class="form-control" 
             placeholder="Название блокнота">
-        <div class="invalid-feedback">
-            Введите TODO
-        </div>
     </modal>
+
 
     <div class="container mt-5">
         <div class="row">
             <div class="col-4">
-                <input class="form-control" placeholder="Поиск...">
+                <input class="form-control mb-2" placeholder="Поиск...">
                 <accordion 
                     :notebooks="notebooks"
-                    class="mt-1"/>
-                <div class="row justify-content-center mt-1">
+                    v-model:selectedNotebookID="selectedNotebookID"
+                    @deleteNotebook="deleteNotebook"/>
+
+                <div class="row justify-content-center mt-2">
                     <button type="button" class="btn btn-success"
                         style="width: 10em;" data-bs-toggle="modal"
-                        data-bs-target="#createNotebokModal">
+                        data-bs-target="#createNotebookModal">
                         Создать блокнот
                     </button>
                 </div>

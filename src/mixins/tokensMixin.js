@@ -20,7 +20,7 @@ export default {
                     localStorage.clear()
                     this.deleteAll()
                     this.$router.push({ name: 'sign-in' })
-                    return true
+                    return false
                 }
                 
                 accessToken = response.data.access_token
@@ -29,7 +29,7 @@ export default {
 
             this.setTokens(accessToken, refreshToken)
 
-            return false
+            return true
         }
     }
 }

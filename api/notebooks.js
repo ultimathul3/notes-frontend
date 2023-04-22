@@ -18,3 +18,11 @@ export function createNotebook(accessToken, description) {
         }
     })
 }
+
+export function deleteNotebook(accessToken, id) {
+    return axios.delete(`${API_URL}/notebooks/${id}`, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+}

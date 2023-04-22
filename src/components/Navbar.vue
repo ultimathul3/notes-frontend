@@ -11,15 +11,14 @@ export default {
 
   methods: {
     async logout() {
-      if (await !this.refreshTokens()) {
+      let refreshed = await this.refreshTokens()
+      if (!refreshed) {
         return
       }
 
       try {
         await logout(this.getAccessToken(), this.getRefreshToken())
-      } catch (error) {
-        return
-      }
+      } catch (error) {}
 
       this.deleteAll()
       this.$router.push({ name: 'sign-in' })
@@ -36,7 +35,7 @@ export default {
           <li 
             @click="$router.push({ name: 'home' })"
             class="pointer">
-            <a class="nav-link text-white" style="font-size: 1.4em">Заметки</a>
+            <strong><a class="nav-link text-white" style="font-size: 1.4em">Заметки</a></strong>
           </li>
         </ul>
 
@@ -47,7 +46,7 @@ export default {
               type="button"
               class="btn btn-outline-light dropdown-toggle me-2"
               data-bs-toggle="dropdown">
-              <i class="bi bi-person"></i> {{ getName() }} ({{ getLogin() }})
+              <i class="bi bi-person"></i> {{ getName() }} <i>({{ getLogin() }})</i>
             </button>
             <ul class="dropdown-menu dropdown-menu-dark">
               <li><button class="dropdown-item pointer" type="button">Уведомления</button></li>
