@@ -24,6 +24,7 @@ export default {
   <div class="app">
     <router-view></router-view>
   </div>
+  <div style="height: 10em;"></div>
 </template>
 
 <style>

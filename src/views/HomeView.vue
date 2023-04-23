@@ -4,7 +4,7 @@ import Modal from '@/components/Modal.vue'
 import storageMixin from '@/mixins/storageMixin'
 import tokensMixin from '@/mixins/tokensMixin'
 import { getNotebooks, createNotebook, deleteNotebook, updateNotebook } from '../../api/notebooks.js'
-import { getNotes } from '../../api/notes.js'
+import { getNotes, createNote, deleteNote, updateNote } from '../../api/notes.js'
 
 export default {
     components: {
@@ -24,6 +24,7 @@ export default {
             inputInvalid: false,
             modalInput: '',
             selectedNotebookID: 0,
+            selectedNoteID: 0,
         }
     },
 
@@ -85,7 +86,7 @@ export default {
             } catch(error) {
                 return
             }
-            this.notebooks = this.notebooks.filter((n) => {return n.id != notebookID})
+            this.notebooks = this.notebooks.filter((n) => {return n.id !== notebookID})
             document.getElementById('deleteNotebookModal-close-btn').click()
         },
     
@@ -106,11 +107,80 @@ export default {
             notebook.description = this.modalInput
             document.getElementById('updateNotebookModal-close-btn').click()
         },
-    
-        updateSelectedNotebookID(id) {
+
+        async createNote(notebookID) {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
+                return
+            }
+
+            let response
+            try {
+                response = await createNote(this.getAccessToken(), notebookID, this.modalInput, '')
+            } catch(error) {
+                this.errors = ['Название заметки должно быть от 1 до 64 символов']
+                return
+            }
+            let notebook = this.notebooks.find(n => n.id === notebookID)
+            notebook.notes.push({
+                id: response.data.id,
+                title: this.modalInput
+            })
+            document.getElementById('createNoteModal-close-btn').click()
+        },
+
+        async updateNote(notebookID, noteID) {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
+                return
+            }
+
+            let response
+            try {
+                response = await updateNote(this.getAccessToken(), notebookID, noteID, this.modalInput, '')
+            } catch(error) {
+                this.errors = ['Название заметки должно быть от 1 до 64 символов']
+                return
+            }
+            let notebook = this.notebooks.find(n => n.id === notebookID)
+            let note = notebook.notes.find(n => n.id === noteID)
+            note.title = this.modalInput
+            document.getElementById('updateNoteModal-close-btn').click()
+        },
+
+        async deleteNote(notebookID, noteID) {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
+                return
+            }
+
+            let response
+            try {
+                response = await deleteNote(this.getAccessToken(), notebookID, noteID)
+            } catch(error) {
+                return
+            }
+            let notebook = this.notebooks.find(n => n.id === notebookID)
+            notebook.notes = notebook.notes.filter(n => n.id !== noteID)
+            document.getElementById('deleteNoteModal-close-btn').click()
+        },
+
+        updateSelectedNotebookID(id, forCreate) {
             this.selectedNotebookID = id
             let notebook = this.notebooks.find(n => n.id === id)
-            this.modalInput = notebook.description
+            if (!forCreate) {
+                this.modalInput = notebook.description
+            } else {
+                this.modalInput = ''
+            }
+        },
+
+        updateSelectedNoteID(notebookID, noteID) {
+            this.selectedNotebookID = notebookID
+            this.selectedNoteID = noteID
+            let notebook = this.notebooks.find(n => n.id === notebookID)
+            let note = notebook.notes.find(n => n.id === noteID)
+            this.modalInput = note.title
         }
     },
 
@@ -122,6 +192,8 @@ export default {
 </script>
 
 <template>
+    <!-- notebooks modal windows -->
+
     <modal
         @btnPressed="deleteNotebook(selectedNotebookID)"
         :id="'deleteNotebookModal'"
@@ -174,13 +246,70 @@ export default {
             placeholder="Название блокнота">
     </modal>
 
+    <!-- notes modal windows -->
+
+    <modal
+        @btnPressed="updateNote(selectedNotebookID, selectedNoteID)"
+        :id="'updateNoteModal'"
+        :title="'Редактирование заметки'"
+        :buttonText="'Редактировать'">
+        <ul class="list-group">
+            <li
+                v-for="(error, index) in errors" 
+                :class="{'mb-3': index == errors.length-1}"
+                class="list-group-item list-group-item-danger">
+                {{ error }}
+            </li>
+        </ul>
+        <input
+            v-model="modalInput"
+            @input="inputInvalid = false"
+            :class="{'is-invalid': inputInvalid}"
+            type="text" 
+            class="form-control" 
+            placeholder="Название заметки">
+    </modal>
+
+    <modal
+        @btnPressed="createNote(selectedNotebookID)"
+        :id="'createNoteModal'"
+        :title="'Создать заметку'"
+        :buttonText="'Создать'">
+        <ul class="list-group">
+            <li
+                v-for="(error, index) in errors" 
+                :class="{'mb-3': index == errors.length-1}"
+                class="list-group-item list-group-item-danger">
+                {{ error }}
+            </li>
+        </ul>
+        <input
+            v-model="modalInput"
+            @input="inputInvalid = false"
+            :class="{'is-invalid': inputInvalid}"
+            type="text" 
+            class="form-control" 
+            placeholder="Название заметки">
+    </modal>
+
+    <modal
+        @btnPressed="deleteNote(selectedNotebookID, selectedNoteID)"
+        :id="'deleteNoteModal'"
+        :title="'Удаление заметки'"
+        :buttonText="'Удалить'">
+        Заметка будет удалена. Вы хотите продолжить?
+    </modal>
+
+    <!-- menu -->
+
     <div class="container mt-5">
         <div class="row">
             <div class="col-4">
                 <input class="form-control mb-2" placeholder="Поиск...">
                 <accordion 
                     :notebooks="notebooks"
-                    @updateSelectedNotebookID="updateSelectedNotebookID"/>
+                    @updateSelectedNotebookID="updateSelectedNotebookID"
+                    @updateSelectedNoteID="updateSelectedNoteID"/>
 
                 <div class="row justify-content-center mt-2">
                     <button @click="modalInput=''" type="button" class="btn btn-success"

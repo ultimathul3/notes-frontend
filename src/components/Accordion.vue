@@ -4,11 +4,11 @@ import Modal from '@/components/Modal.vue'
 export default {
     props: {
         notebooks: Array,
-        selectedNotebookID: Number
     },
 
     emits: [
-        'updateSelectedNotebookID'
+        'updateSelectedNotebookID',
+        'updateSelectedNoteID'
     ],
 
     components: {
@@ -30,8 +30,22 @@ export default {
             
             <div :id="`collapse${notebook.id}`" class="accordion-collapse collapse">
                 <ul v-for="note in notebook.notes" :key="note.id" class="list-group m-2">
-                    <li class="list-group-item list-group-item-action list-note" style="text-align:left;">
-                        {{ note.title }} <span style="float:right;"><i class="bi bi-pencil pointer"></i> <i class="bi bi-x-circle pointer"></i></span>
+                    <li @click=""
+                        class="list-group-item list-group-item-action list-note"
+                        style="text-align:left;">
+                        {{ note.title }}
+                        <span style="float:right;">
+                            <i @click.stop="$emit('updateSelectedNoteID', notebook.id, note.id)"
+                                class="bi bi-pencil pointer"
+                                data-bs-toggle="modal"
+                                data-bs-target="#updateNoteModal">
+                            </i>&nbsp;
+                            <i @click.stop="$emit('updateSelectedNoteID', notebook.id, note.id)"
+                                class="bi bi-x-circle pointer"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteNoteModal">
+                            </i>
+                        </span>
                     </li>
                 </ul>
 
@@ -40,7 +54,9 @@ export default {
                 <div class="container mb-2">
                     <div class="row justify-content-center">
                         <div class="col">
-                            <button type="button" class="btn btn-success">
+                            <button @click="$emit('updateSelectedNotebookID', notebook.id, true)" type="button" class="btn btn-success"
+                                data-bs-toggle="modal"
+                                data-bs-target="#createNoteModal">
                                 Заметка
                             </button>
                         </div>
@@ -50,14 +66,14 @@ export default {
                             </button>
                         </div>
                         <div class="col">
-                            <button @click="$emit('updateSelectedNotebookID', notebook.id)" type="button" class="btn btn-info"
+                            <button @click="$emit('updateSelectedNotebookID', notebook.id, false)" type="button" class="btn btn-info"
                                 data-bs-toggle="modal"
                                 data-bs-target="#updateNotebookModal">
                                 <i class="bi bi-pencil pointer"></i>
                             </button>
                         </div>
                         <div class="col">
-                            <button @click="$emit('updateSelectedNotebookID', notebook.id)" type="button" class="btn btn-danger"
+                            <button @click="$emit('updateSelectedNotebookID', notebook.id, false)" type="button" class="btn btn-danger"
                                 data-bs-toggle="modal"
                                 data-bs-target="#deleteNotebookModal">
                                 <i class="bi bi-x-circle pointer"></i>
