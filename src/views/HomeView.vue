@@ -1,15 +1,17 @@
 <script>
 import Accordion from '@/components/Accordion.vue'
 import Modal from '@/components/Modal.vue'
+import Note from '@/components/Note.vue'
 import storageMixin from '@/mixins/storageMixin'
 import tokensMixin from '@/mixins/tokensMixin'
 import { getNotebooks, createNotebook, deleteNotebook, updateNotebook } from '../../api/notebooks.js'
-import { getNotes, createNote, deleteNote, updateNote } from '../../api/notes.js'
+import { getNotes, createNote, deleteNote, updateNoteTitle } from '../../api/notes.js'
 
 export default {
     components: {
         Accordion,
-        Modal
+        Modal,
+        Note,
     },
 
     mixins: [
@@ -132,7 +134,7 @@ export default {
             document.getElementById('createNoteModal-close-btn').click()
         },
 
-        async updateNote(notebookID, noteID) {
+        async updateNoteTitle(notebookID, noteID) {
             let refreshed = await this.refreshTokens()
             if (!refreshed) {
                 return
@@ -140,15 +142,17 @@ export default {
 
             let response
             try {
-                response = await updateNote(this.getAccessToken(), notebookID, noteID, this.modalInput, '')
+                response = await updateNoteTitle(this.getAccessToken(), notebookID, noteID, this.modalInput)
             } catch(error) {
                 this.errors = ['Название заметки должно быть от 1 до 64 символов']
                 return
             }
+            
             let notebook = this.notebooks.find(n => n.id === notebookID)
             let note = notebook.notes.find(n => n.id === noteID)
             note.title = this.modalInput
-            document.getElementById('updateNoteModal-close-btn').click()
+            
+            document.getElementById('updateNoteTitleModal-close-btn').click()
         },
 
         async deleteNote(notebookID, noteID) {
@@ -271,8 +275,8 @@ export default {
     <!-- notes modal windows -->
 
     <modal
-        @btnPressed="updateNote(selectedNotebookID, selectedNoteID)"
-        :id="'updateNoteModal'"
+        @btnPressed="updateNoteTitle(selectedNotebookID, selectedNoteID)"
+        :id="'updateNoteTitleModal'"
         :title="'Редактирование заметки'"
         :buttonText="'Редактировать'">
         <ul class="list-group">
@@ -342,6 +346,9 @@ export default {
                         Создать блокнот
                     </button>
                 </div>
+            </div>
+            <div class="col">
+                <note/>
             </div>
         </div>
     </div>

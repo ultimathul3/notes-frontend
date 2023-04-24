@@ -49,7 +49,7 @@ export default {
                             <i @click.stop="$emit('updateSelectedNoteID', notebook.id, note.id)"
                                 class="bi bi-pencil pointer"
                                 data-bs-toggle="modal"
-                                data-bs-target="#updateNoteModal">
+                                data-bs-target="#updateNoteTitleModal">
                             </i>&nbsp;
                             <i @click.stop="$emit('updateSelectedNoteID', notebook.id, note.id)"
                                 class="bi bi-x-circle pointer"

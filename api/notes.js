@@ -28,10 +28,19 @@ export function deleteNote(accessToken, notebookID, noteID) {
     })
 }
 
-export function updateNote(accessToken, notebookID, noteID, title, body) {
-    return axios.put(`${API_URL}/notebooks/${notebookID}/notes/${noteID}`, {
+export function updateNoteTitle(accessToken, notebookID, noteID, title) {
+    return axios.patch(`${API_URL}/notebooks/${notebookID}/notes/${noteID}`, {
         'title': title,
-        'body': body
+    }, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+}
+
+export function updateNoteBody(accessToken, notebookID, noteID, body) {
+    return axios.patch(`${API_URL}/notebooks/${notebookID}/notes/${noteID}`, {
+        'body': body,
     }, {
         headers: {
             'Authorization': 'Bearer ' + accessToken
