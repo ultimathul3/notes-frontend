@@ -122,6 +122,9 @@ export default {
                 return
             }
             let notebook = this.notebooks.find(n => n.id === notebookID)
+            if (notebook.notes === undefined) {
+                notebook.notes = []
+            }
             notebook.notes.push({
                 id: response.data.id,
                 title: this.modalInput
@@ -181,6 +184,25 @@ export default {
             let notebook = this.notebooks.find(n => n.id === notebookID)
             let note = notebook.notes.find(n => n.id === noteID)
             this.modalInput = note.title
+        },
+
+        searchInput(event) {
+            if (event.target.value === '') {
+                this.getNotebooks()
+            } else {
+                let newNotebooks = []
+                for (let notebook of this.notebooks) {
+                    let newNotebook = notebook
+                    newNotebook.notes = notebook?.notes.filter(n => 
+                        n.title.toLowerCase().indexOf(event.target.value.toLowerCase()) >= 0
+                    )
+                    if (newNotebook?.notes.length != 0) {
+                        newNotebooks.push(newNotebook)
+                    }
+                }
+                this.notebooks = newNotebooks
+            }
+            this.$refs.accordion.collapseAccordion()
         }
     },
 
@@ -301,12 +323,14 @@ export default {
     </modal>
 
     <!-- menu -->
-
     <div class="container mt-5">
         <div class="row">
             <div class="col-4">
-                <input class="form-control mb-2" placeholder="Поиск...">
-                <accordion 
+                <input @input="searchInput"
+                    class="form-control mb-2"
+                    placeholder="Поиск...">
+                
+                <accordion ref="accordion"
                     :notebooks="notebooks"
                     @updateSelectedNotebookID="updateSelectedNotebookID"
                     @updateSelectedNoteID="updateSelectedNoteID"/>

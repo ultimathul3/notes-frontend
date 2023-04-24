@@ -13,6 +13,17 @@ export default {
 
     components: {
         Modal
+    },
+
+    methods: {
+        collapseAccordion() {
+            var collapseElementList = [].slice.call(document.querySelectorAll('.collapse'))
+            collapseElementList.map((element) => {
+                if (!element.classList.contains('show')) {
+                    new bootstrap.Collapse(element)
+                }
+            })
+        }
     }
 }
 </script>
@@ -21,7 +32,7 @@ export default {
     <div class="accordion">
         <div v-for="notebook in notebooks" :key="notebook.id" class="accordion-item">
             
-            <h2 class="accordion-header" id="headingTwo">
+            <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                     :data-bs-target="'#collapse'+notebook.id">
                     {{ notebook.description }}
