@@ -9,6 +9,14 @@ export function getNotes(accessToken, notebookID) {
     })
 }
 
+export function getNote(accessToken, notebookID, noteID) {
+    return axios.get(`${API_URL}/notebooks/${notebookID}/notes/${noteID}`, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+}
+
 export function createNote(accessToken, notebookID, title, body) {
     return axios.post(`${API_URL}/notebooks/${notebookID}/notes/`, {
         'title': title,

@@ -4,11 +4,13 @@ import Modal from '@/components/Modal.vue'
 export default {
     props: {
         notebooks: Array,
+        clickedNoteID: Number,
     },
 
     emits: [
-        'updateSelectedNotebookID',
-        'updateSelectedNoteID'
+        'updateSelectedNotebook',
+        'updateSelectedNote',
+        'clickNote',
     ],
 
     components: {
@@ -41,17 +43,18 @@ export default {
             
             <div :id="`collapse${notebook.id}`" class="accordion-collapse collapse">
                 <ul v-for="note in notebook.notes" :key="note.id" class="list-group m-2">
-                    <li @click=""
+                    <li @click="$emit('clickNote', notebook.id, note.id)"
                         class="list-group-item list-group-item-action list-note"
+                        :class="{'active': note.id === clickedNoteID}"
                         style="text-align:left;">
                         {{ note.title }}
                         <span style="float:right;">
-                            <i @click.stop="$emit('updateSelectedNoteID', notebook.id, note.id)"
+                            <i @click.stop="$emit('updateSelectedNote', notebook.id, note.id)"
                                 class="bi bi-pencil pointer"
                                 data-bs-toggle="modal"
                                 data-bs-target="#updateNoteTitleModal">
                             </i>&nbsp;
-                            <i @click.stop="$emit('updateSelectedNoteID', notebook.id, note.id)"
+                            <i @click.stop="$emit('updateSelectedNote', notebook.id, note.id)"
                                 class="bi bi-x-circle pointer"
                                 data-bs-toggle="modal"
                                 data-bs-target="#deleteNoteModal">
@@ -63,28 +66,28 @@ export default {
                 <div v-if="notebook.notes?.length === 0 || notebook.notes === undefined" class="space mt-2"></div>
 
                 <div class="container mb-2">
-                    <div class="row justify-content-center">
-                        <div class="col">
-                            <button @click="$emit('updateSelectedNotebookID', notebook.id, true)" type="button" class="btn btn-success"
+                    <div class="row justify-content-md-center">
+                        <div class="col-auto">
+                            <button @click="$emit('updateSelectedNotebook', notebook.id, true)" type="button" class="btn btn-success"
                                 data-bs-toggle="modal"
                                 data-bs-target="#createNoteModal">
                                 Заметка
                             </button>
                         </div>
-                        <div class="col">
+                        <div class="col-auto">
                             <button type="button" class="btn btn-primary">
                                 Список
                             </button>
                         </div>
-                        <div class="col">
-                            <button @click="$emit('updateSelectedNotebookID', notebook.id, false)" type="button" class="btn btn-info"
+                        <div class="col-auto">
+                            <button @click="$emit('updateSelectedNotebook', notebook.id, false)" type="button" class="btn btn-info"
                                 data-bs-toggle="modal"
                                 data-bs-target="#updateNotebookModal">
                                 <i class="bi bi-pencil pointer"></i>
                             </button>
                         </div>
-                        <div class="col">
-                            <button @click="$emit('updateSelectedNotebookID', notebook.id, false)" type="button" class="btn btn-danger"
+                        <div class="col-auto">
+                            <button @click="$emit('updateSelectedNotebook', notebook.id, false)" type="button" class="btn btn-danger"
                                 data-bs-toggle="modal"
                                 data-bs-target="#deleteNotebookModal">
                                 <i class="bi bi-x-circle pointer"></i>

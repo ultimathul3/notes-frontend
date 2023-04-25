@@ -5,7 +5,7 @@ import Note from '@/components/Note.vue'
 import storageMixin from '@/mixins/storageMixin'
 import tokensMixin from '@/mixins/tokensMixin'
 import { getNotebooks, createNotebook, deleteNotebook, updateNotebook } from '../../api/notebooks.js'
-import { getNotes, createNote, deleteNote, updateNoteTitle } from '../../api/notes.js'
+import { getNotes, getNote, createNote, deleteNote, updateNoteTitle, updateNoteBody } from '../../api/notes.js'
 
 export default {
     components: {
@@ -27,6 +27,9 @@ export default {
             modalInput: '',
             selectedNotebookID: 0,
             selectedNoteID: 0,
+            selectedNote: {},
+            clickedNoteID: -1,
+            selectedNoteBody: '',
         }
     },
 
@@ -88,7 +91,14 @@ export default {
             } catch(error) {
                 return
             }
+
+            let notebook = this.notebooks.find(n => n.id === notebookID)
+            if (notebook.notes !== undefined && notebook.notes.find(n => n.id === this.clickedNoteID) !== undefined) {
+                this.clickedNoteID = -1
+            }
+
             this.notebooks = this.notebooks.filter((n) => {return n.id !== notebookID})
+
             document.getElementById('deleteNotebookModal-close-btn').click()
         },
     
@@ -129,7 +139,10 @@ export default {
             }
             notebook.notes.push({
                 id: response.data.id,
-                title: this.modalInput
+                title: this.modalInput,
+                body: '',
+                created_at: new Date(),
+                updated_at: new Date(),
             })
             document.getElementById('createNoteModal-close-btn').click()
         },
@@ -167,12 +180,51 @@ export default {
             } catch(error) {
                 return
             }
+            
             let notebook = this.notebooks.find(n => n.id === notebookID)
             notebook.notes = notebook.notes.filter(n => n.id !== noteID)
+
+            if (this.clickedNoteID == noteID) {
+                this.clickedNoteID = -1
+            }
+            
             document.getElementById('deleteNoteModal-close-btn').click()
         },
 
-        updateSelectedNotebookID(id, forCreate) {
+        async saveNote(noteBody) {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
+                return
+            }
+
+            try {
+                await updateNoteBody(
+                    this.getAccessToken(),
+                    this.selectedNotebookID,
+                    this.selectedNoteID,
+                    noteBody
+                )
+            } catch(error) {
+                return
+            }
+
+            let response
+            try {
+                response = await getNote(
+                    this.getAccessToken(),
+                    this.selectedNotebookID,
+                    this.selectedNoteID,
+                )
+            } catch(error) {
+                return
+            }
+
+            this.selectedNote.updated_at = response.data.updated_at
+            console.log(this.selectedNote)
+            this.selectedNote.body = response.data.body
+        },
+
+        updateSelectedNotebook(id, forCreate) {
             this.selectedNotebookID = id
             let notebook = this.notebooks.find(n => n.id === id)
             if (!forCreate) {
@@ -182,12 +234,24 @@ export default {
             }
         },
 
-        updateSelectedNoteID(notebookID, noteID) {
+        updateSelectedNote(notebookID, noteID) {
             this.selectedNotebookID = notebookID
             this.selectedNoteID = noteID
             let notebook = this.notebooks.find(n => n.id === notebookID)
             let note = notebook.notes.find(n => n.id === noteID)
             this.modalInput = note.title
+            this.selectedNoteBody = note.body
+        },
+
+        clickNote(notebookID, noteID) {
+            this.selectedNotebookID = notebookID
+            this.selectedNoteID = noteID
+            let notebook = this.notebooks.find(n => n.id === notebookID)
+            let note = notebook.notes.find(n => n.id === noteID)
+            this.clickedNoteID = note.id
+            this.selectedNoteBody = note.body
+            this.selectedNote = note
+            window.scrollTo(0, 0)
         },
 
         searchInput(event) {
@@ -336,8 +400,10 @@ export default {
                 
                 <accordion ref="accordion"
                     :notebooks="notebooks"
-                    @updateSelectedNotebookID="updateSelectedNotebookID"
-                    @updateSelectedNoteID="updateSelectedNoteID"/>
+                    :clickedNoteID="clickedNoteID"
+                    @updateSelectedNotebook="updateSelectedNotebook"
+                    @updateSelectedNote="updateSelectedNote"
+                    @clickNote="clickNote"/>
 
                 <div class="row justify-content-center mt-2">
                     <button @click="modalInput=''" type="button" class="btn btn-success"
@@ -347,8 +413,11 @@ export default {
                     </button>
                 </div>
             </div>
-            <div class="col">
-                <note/>
+            <div v-if="clickedNoteID !== -1" class="col">
+                <note 
+                    @saveNote="saveNote"
+                    :selectedNoteBody="selectedNoteBody"
+                    :selectedNote="selectedNote"/>
             </div>
         </div>
     </div>
