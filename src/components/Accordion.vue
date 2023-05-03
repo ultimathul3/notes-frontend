@@ -4,7 +4,7 @@ import Modal from '@/components/Modal.vue'
 export default {
     props: {
         notebooks: Array,
-        clickedNoteID: Number,
+        clickedNote: Object,
     },
 
     emits: [
@@ -42,20 +42,20 @@ export default {
             </h2>
             
             <div :id="`collapse${notebook.id}`" class="accordion-collapse collapse">
-                <ul v-for="note in notebook.notes" :key="note.id" class="list-group m-2">
-                    <li @click="$emit('clickNote', notebook.id, note.id)"
+                <ul v-for="note in notebook.notes" :key="note.id" class="list-group m-2 pointer">
+                    <li @click="$emit('clickNote', notebook, note)"
                         class="list-group-item list-group-item-action list-note"
-                        :class="{'active': note.id === clickedNoteID}"
+                        :class="{'active': note.id === clickedNote?.id}"
                         style="text-align:left;">
                         {{ note.title }}
                         <span style="float:right;">
-                            <i @click.stop="$emit('updateSelectedNote', notebook.id, note.id)"
-                                class="bi bi-pencil pointer"
+                            <i @click.stop="$emit('updateSelectedNote', notebook, note)"
+                                class="bi bi-pencil"
                                 data-bs-toggle="modal"
                                 data-bs-target="#updateNoteTitleModal">
                             </i>&nbsp;
-                            <i @click.stop="$emit('updateSelectedNote', notebook.id, note.id)"
-                                class="bi bi-x-circle pointer"
+                            <i @click.stop="$emit('updateSelectedNote', notebook, note)"
+                                class="bi bi-x-circle"
                                 data-bs-toggle="modal"
                                 data-bs-target="#deleteNoteModal">
                             </i>
@@ -63,12 +63,12 @@ export default {
                     </li>
                 </ul>
 
-                <div v-if="notebook.notes?.length === 0 || notebook.notes === undefined" class="space mt-2"></div>
+                <div v-if="notebook.notes === undefined || notebook.notes.length === 0" class="mt-2"></div>
 
                 <div class="container mb-2">
                     <div class="row justify-content-md-center">
                         <div class="col-auto">
-                            <button @click="$emit('updateSelectedNotebook', notebook.id, true)" type="button" class="btn btn-success"
+                            <button @click="$emit('updateSelectedNotebook', notebook, true)" type="button" class="btn btn-success"
                                 data-bs-toggle="modal"
                                 data-bs-target="#createNoteModal">
                                 Заметка
@@ -80,14 +80,14 @@ export default {
                             </button>
                         </div>
                         <div class="col-auto">
-                            <button @click="$emit('updateSelectedNotebook', notebook.id, false)" type="button" class="btn btn-info"
+                            <button @click="$emit('updateSelectedNotebook', notebook, false)" type="button" class="btn btn-info"
                                 data-bs-toggle="modal"
                                 data-bs-target="#updateNotebookModal">
                                 <i class="bi bi-pencil pointer"></i>
                             </button>
                         </div>
                         <div class="col-auto">
-                            <button @click="$emit('updateSelectedNotebook', notebook.id, false)" type="button" class="btn btn-danger"
+                            <button @click="$emit('updateSelectedNotebook', notebook, false)" type="button" class="btn btn-danger"
                                 data-bs-toggle="modal"
                                 data-bs-target="#deleteNotebookModal">
                                 <i class="bi bi-x-circle pointer"></i>
@@ -96,7 +96,6 @@ export default {
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
