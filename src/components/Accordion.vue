@@ -5,12 +5,15 @@ export default {
     props: {
         notebooks: Array,
         clickedNote: Object,
+        clickedTodoList: Object,
     },
 
     emits: [
         'updateSelectedNotebook',
         'updateSelectedNote',
         'clickNote',
+        'updateSelectedTodoList',
+        'clickTodoList',
     ],
 
     components: {
@@ -63,6 +66,27 @@ export default {
                     </li>
                 </ul>
 
+                <ul v-for="todo_list in notebook.todo_lists" :key="todo_list.id" class="list-group m-2 pointer">
+                    <li @click="$emit('clickTodoList', notebook, todo_list)"
+                        class="list-group-item list-group-item-action list-todo"
+                        :class="{'active': todo_list.id === clickedTodoList?.id}"
+                        style="text-align:left;">
+                        {{ todo_list.title }}
+                        <span style="float:right;">
+                            <i @click.stop="$emit('updateSelectedTodoList', notebook, todo_list)"
+                                class="bi bi-pencil"
+                                data-bs-toggle="modal"
+                                data-bs-target="#updateTodoListModal">
+                            </i>&nbsp;
+                            <i @click.stop="$emit('updateSelectedTodoList', notebook, todo_list)"
+                                class="bi bi-x-circle"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteTodoListModal">
+                            </i>
+                        </span>
+                    </li>
+                </ul>
+
                 <div v-if="notebook.notes === undefined || notebook.notes.length === 0" class="mt-2"></div>
 
                 <div class="container mb-2">
@@ -75,7 +99,9 @@ export default {
                             </button>
                         </div>
                         <div class="col-auto">
-                            <button type="button" class="btn btn-primary">
+                            <button @click="$emit('updateSelectedNotebook', notebook, true)" type="button" class="btn btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#createTodoListModal">
                                 Список
                             </button>
                         </div>
@@ -104,5 +130,11 @@ export default {
 <style scoped>
 .list-note {
   border: var(--bs-list-group-border-width) solid #13653f;
+}
+.list-todo {
+  border: var(--bs-list-group-border-width) solid #0d6efd;
+}
+.list-group-item.active {
+    background-color: #acacac;
 }
 </style>

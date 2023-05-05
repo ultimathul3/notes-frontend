@@ -1,6 +1,7 @@
 import tokensMixin from '@/mixins/tokensMixin'
 import { getNotebooks, createNotebook, deleteNotebook, updateNotebook } from '../../api/notebooks.js'
 import { getNotes } from '../../api/notes.js'
+import { getTodoLists } from '../../api/todoLists.js'
 
 export default {
     mixins: [
@@ -44,6 +45,17 @@ export default {
                 if (this.notebooks[i].notes === undefined) {
                     this.notebooks[i].notes = []
                 }
+
+                try {
+                    response = await getTodoLists(this.getAccessToken(), this.notebooks[i].id)
+                } catch(error) {
+                    return
+                }
+
+                this.notebooks[i].todo_lists = response.data.todo_lists
+                if (this.notebooks[i].todo_lists === undefined) {
+                    this.notebooks[i].todo_lists = []
+                }
             }
         },
 
@@ -65,6 +77,7 @@ export default {
                 id: response.data.id,
                 description: this.modalInput,
                 notes: [],
+                todo_lists: [],
             })
             
             document.getElementById('createNotebookModal-close-btn').click()

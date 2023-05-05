@@ -22,6 +22,9 @@ export default {
         'updateNoteTitle',
         'createNote',
         'deleteNote',
+        'createTodoList',
+        'updateTodoList',
+        'deleteTodoList',
     ]
 }
 </script>
@@ -50,7 +53,7 @@ export default {
         </ul>
         <input :value="modelValue" 
             @input="$emit('update:modelValue', $event.target.value)"
-            type="text" class="form-control" 
+            type="text" class="form-control"
             placeholder="Название блокнота">
     </modal>
 
@@ -117,5 +120,51 @@ export default {
         :title="'Удаление заметки'"
         :buttonText="'Удалить'">
         Заметка будет удалена. Вы хотите продолжить?
+    </modal>
+
+    <modal
+        @btnPressed="$emit('createTodoList')"
+        :id="'createTodoListModal'"
+        :title="'Создать список'"
+        :buttonText="'Создать'">
+        <ul class="list-group">
+            <li
+                v-for="(error, index) in errors" 
+                :class="{'mb-3': index == errors.length-1}"
+                class="list-group-item list-group-item-danger">
+                {{ error }}
+            </li>
+        </ul>
+        <input :value="modelValue" 
+            @input="$emit('update:modelValue', $event.target.value)"
+            type="text" class="form-control"
+            placeholder="Название списка">
+    </modal>
+
+    <modal
+        @btnPressed="$emit('updateTodoList')"
+        :id="'updateTodoListModal'"
+        :title="'Редактирование списка'"
+        :buttonText="'Редактировать'">
+        <ul class="list-group">
+            <li
+                v-for="(error, index) in errors" 
+                :class="{'mb-3': index == errors.length-1}"
+                class="list-group-item list-group-item-danger">
+                {{ error }}
+            </li>
+        </ul>
+        <input :value="modelValue" 
+            @input="$emit('update:modelValue', $event.target.value)"
+            type="text" class="form-control"
+            placeholder="Название списка">
+    </modal>
+
+    <modal
+        @btnPressed="$emit('deleteTodoList')"
+        :id="'deleteTodoListModal'"
+        :title="'Удаление списка'"
+        :buttonText="'Удалить'">
+        Список будет удален. Вы хотите продолжить?
     </modal>
 </template>
