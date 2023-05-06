@@ -25,6 +25,8 @@ export default {
         'createTodoList',
         'updateTodoList',
         'deleteTodoList',
+        'createTodoItem',
+        'updateTodoItemBody',
     ]
 }
 </script>
@@ -166,5 +168,43 @@ export default {
         :title="'Удаление списка'"
         :buttonText="'Удалить'">
         Список будет удален. Вы хотите продолжить?
+    </modal>
+
+    <modal
+        @btnPressed="$emit('createTodoItem')"
+        :id="'createTodoItemModal'"
+        :title="'Создание элемента списка'"
+        :buttonText="'Создать'">
+        <ul class="list-group">
+            <li
+                v-for="(error, index) in errors" 
+                :class="{'mb-3': index == errors.length-1}"
+                class="list-group-item list-group-item-danger">
+                {{ error }}
+            </li>
+        </ul>
+        <input :value="modelValue" 
+            @input="$emit('update:modelValue', $event.target.value)"
+            type="text" class="form-control"
+            placeholder="Содержимое элемента списка">
+    </modal>
+
+    <modal
+        @btnPressed="$emit('updateTodoItemBody')"
+        :id="'updateTodoItemBodyModal'"
+        :title="'Редактирование элемента списка'"
+        :buttonText="'Редактировать'">
+        <ul class="list-group">
+            <li
+                v-for="(error, index) in errors" 
+                :class="{'mb-3': index == errors.length-1}"
+                class="list-group-item list-group-item-danger">
+                {{ error }}
+            </li>
+        </ul>
+        <input :value="modelValue" 
+            @input="$emit('update:modelValue', $event.target.value)"
+            type="text" class="form-control"
+            placeholder="Содержимое элемента списка">
     </modal>
 </template>

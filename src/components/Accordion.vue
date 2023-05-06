@@ -66,19 +66,19 @@ export default {
                     </li>
                 </ul>
 
-                <ul v-for="todo_list in notebook.todo_lists" :key="todo_list.id" class="list-group m-2 pointer">
-                    <li @click="$emit('clickTodoList', notebook, todo_list)"
+                <ul v-for="todoList in notebook.todo_lists" :key="todoList.id" class="list-group m-2 pointer">
+                    <li @click="$emit('clickTodoList', notebook, todoList)"
                         class="list-group-item list-group-item-action list-todo"
-                        :class="{'active': todo_list.id === clickedTodoList?.id}"
+                        :class="{'active': todoList.id === clickedTodoList?.id}"
                         style="text-align:left;">
-                        {{ todo_list.title }}
+                        {{ todoList.title }}
                         <span style="float:right;">
-                            <i @click.stop="$emit('updateSelectedTodoList', notebook, todo_list)"
+                            <i @click.stop="$emit('updateSelectedTodoList', notebook, todoList)"
                                 class="bi bi-pencil"
                                 data-bs-toggle="modal"
                                 data-bs-target="#updateTodoListModal">
                             </i>&nbsp;
-                            <i @click.stop="$emit('updateSelectedTodoList', notebook, todo_list)"
+                            <i @click.stop="$emit('updateSelectedTodoList', notebook, todoList)"
                                 class="bi bi-x-circle"
                                 data-bs-toggle="modal"
                                 data-bs-target="#deleteTodoListModal">

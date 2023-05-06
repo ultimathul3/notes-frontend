@@ -1,26 +1,26 @@
 <script>
 import Accordion from '@/components/Accordion.vue'
-import Modal from '@/components/Modal.vue'
 import HomeModals from '@/components/HomeModals.vue'
 import Note from '@/components/Note.vue'
-import tokensMixin from '@/mixins/tokensMixin'
+import Todo from '@/components/Todo.vue'
 import notebooksMixin from '@/mixins/notebooksMixin'
 import notesMixin from '@/mixins/notesMixin'
 import todoListsMixin from '@/mixins/todoListsMixin'
+import todoItemsMixin from '@/mixins/todoItemsMixin'
 
 export default {
     components: {
         Accordion,
         HomeModals,
-        Modal,
         Note,
+        Todo,
     },
 
     mixins: [
-        tokensMixin,
         notebooksMixin,
         notesMixin,
         todoListsMixin,
+        todoItemsMixin,
     ],
 
     data() {
@@ -32,6 +32,7 @@ export default {
             clickedNote: undefined,
             selectedTodoList: undefined,
             clickedTodoList: undefined,
+            selectedTodoItem: undefined,
         }
     },
 
@@ -52,6 +53,7 @@ export default {
         },
 
         clickNote(notebook, note) {
+            this.clickedTodoList = undefined
             this.selectedNotebook = notebook
             this.clickedNote = note
             window.scrollTo(0, 0)
@@ -61,6 +63,19 @@ export default {
             this.selectedNotebook = notebook
             this.selectedTodoList = todoList
             this.modalInput = todoList.title
+        },
+
+        async clickTodoList(notebook, todoList) {
+            this.clickedNote = undefined
+            this.selectedNotebook = notebook
+            this.clickedTodoList = todoList
+            window.scrollTo(0, 0)
+            await this.getTodoItems()
+        },
+
+        updateSelectedTodoItem(todoItem) {
+            this.selectedTodoItem = todoItem
+            this.modalInput = todoItem.body
         },
 
         searchInput(event) {
@@ -131,6 +146,16 @@ export default {
                     @updateNoteBody="updateNoteBody"
                     :clickedNote="clickedNote"/>
             </div>
+            
+            <div v-if="clickedTodoList !== undefined" class="col">
+                <todo
+                    @updateTodoItemDone="updateTodoItemDone"
+                    @deleteTodoItem="deleteTodoItem"
+                    @updateSelectedTodoItem="updateSelectedTodoItem"
+                    @updateTodoItemBody="updateTodoItemBody"
+                    :clickedTodoList="clickedTodoList"
+                    v-model="modalInput"/>
+            </div>
         </div>
     </div>
 
@@ -145,5 +170,7 @@ export default {
         @deleteNote="deleteNote"
         @createTodoList="createTodoList"
         @updateTodoList="updateTodoList"
-        @deleteTodoList="deleteTodoList"/>
+        @deleteTodoList="deleteTodoList"
+        @createTodoItem="createTodoItem"
+        @updateTodoItemBody="updateTodoItemBody"/>
 </template>

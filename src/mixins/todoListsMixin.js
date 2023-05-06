@@ -26,6 +26,7 @@ export default {
                 title: this.modalInput,
                 created_at: new Date(),
                 updated_at: new Date(),
+                items: [],
             })
             
             document.getElementById('createTodoListModal-close-btn').click()
