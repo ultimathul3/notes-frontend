@@ -7,6 +7,7 @@ import notebooksMixin from '@/mixins/notebooksMixin'
 import notesMixin from '@/mixins/notesMixin'
 import todoListsMixin from '@/mixins/todoListsMixin'
 import todoItemsMixin from '@/mixins/todoItemsMixin'
+import searchMixin from '@/mixins/searchMixin'
 
 export default {
     components: {
@@ -21,18 +22,22 @@ export default {
         notesMixin,
         todoListsMixin,
         todoItemsMixin,
+        searchMixin,
     ],
 
     data() {
         return {
             errors: [],
             modalInput: '',
+            searchQuery: '',
             selectedNotebook: undefined,
             selectedNote: undefined,
             clickedNote: undefined,
             selectedTodoList: undefined,
             clickedTodoList: undefined,
             selectedTodoItem: undefined,
+            searchMode: false,
+            emptySearch: false,
         }
     },
 
@@ -79,23 +84,17 @@ export default {
         },
 
         searchInput(event) {
-            if (event.target.value === '') {
-                this.getNotebooks()
-            } else {
-                let newNotebooks = []
-                for (let notebook of this.notebooks) {
-                    let newNotebook = notebook
-                    newNotebook.notes = notebook?.notes.filter(n => 
-                        n.title.toLowerCase().indexOf(event.target.value.toLowerCase()) >= 0
-                    )
-                    if (newNotebook?.notes.length != 0) {
-                        newNotebooks.push(newNotebook)
-                    }
-                }
-                this.notebooks = newNotebooks
+            if (this.searchQuery === '') {
+                this.cancelSearch()
             }
+        },
+
+        async cancelSearch() {
+            await this.getNotebooks()
             this.$refs.accordion.collapseAccordion()
-        }
+            this.searchMode = false
+            this.searchQuery = ''
+        },
     },
 
     mounted() {
@@ -111,12 +110,17 @@ export default {
             <div class="col-4">
                 <div class="row">
                     <div class="col">
-                        <input @input="searchInput"
+                        <input v-model="searchQuery" @input="searchInput"
                             class="form-control mb-2"
                             placeholder="Поиск...">
                     </div>
+                    <div v-if="searchMode" class="col-auto ps-0">
+                        <button class="btn btn-danger" @click="cancelSearch">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
                     <div class="col-auto ps-0">
-                        <button class="btn btn-success">
+                        <button class="btn btn-success" @click="searchByTitle">
                             <i class="bi bi-search"></i>
                         </button>
                     </div>
@@ -126,13 +130,15 @@ export default {
                     :notebooks="notebooks"
                     :clickedNote="clickedNote"
                     :clickedTodoList="clickedTodoList"
+                    :searchMode="searchMode"
+                    :emptySearch="emptySearch"
                     @updateSelectedNotebook="updateSelectedNotebook"
                     @updateSelectedNote="updateSelectedNote"
                     @clickNote="clickNote"
                     @updateSelectedTodoList="updateSelectedTodoList"
                     @clickTodoList="clickTodoList"/>
 
-                <div class="row justify-content-center mt-2">
+                <div class="row justify-content-center mt-2" v-if="!searchMode">
                     <button @click="modalInput=''" type="button" class="btn btn-success"
                         style="width: 10em;" data-bs-toggle="modal"
                         data-bs-target="#createNotebookModal">

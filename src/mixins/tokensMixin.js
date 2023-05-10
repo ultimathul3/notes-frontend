@@ -17,9 +17,11 @@ export default {
                 try {
                     response = await refresh(refreshToken)
                 } catch (error) {
-                    localStorage.clear()
-                    this.deleteAll()
-                    this.$router.push({ name: 'sign-in' })
+                    if (error.code !== 'ERR_NETWORK') {
+                        localStorage.clear()
+                        this.deleteAll()
+                        this.$router.push({ name: 'sign-in' })
+                    }
                     return false
                 }
                 

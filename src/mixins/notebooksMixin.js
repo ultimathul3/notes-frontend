@@ -99,6 +99,9 @@ export default {
             if (this.selectedNotebook.notes.find(n => n.id === this.clickedNote?.id)) {
                 this.clickedNote = undefined
             }
+            if (this.selectedNotebook.todo_lists.find(n => n.id === this.clickedTodoList?.id)) {
+                this.clickedTodoList = undefined
+            }
             this.notebooks = this.notebooks.filter(n => n.id !== this.selectedNotebook.id)
             this.selectedNotebook = undefined
 
