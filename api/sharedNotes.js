@@ -27,3 +27,11 @@ export function deleteSharedNote(accessToken, sharedNoteID) {
         }
     })
 }
+
+export function acceptSharedNote(accessToken, sharedNoteID) {
+    return axios.post(`${API_URL}/shared-notes/incoming/${sharedNoteID}`, {}, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+}

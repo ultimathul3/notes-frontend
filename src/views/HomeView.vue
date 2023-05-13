@@ -204,7 +204,7 @@ export default {
                     <i class="bi bi-person"></i> <b>{{ item.owner_name }}</b> <i>({{ item.owner_login }})</i><br>
                     Пользователь хочет поделиться с вами заметкой '{{ item.title }}'
                     <span style="float:right;">
-                        <i @click.stop="$emit('updateSelectedTodoItem', item)" class="bi bi-check-circle pointer"></i>
+                        <i @click.stop="acceptSharedNote(item.id)" class="bi bi-check-circle pointer"></i>
                         &nbsp;
                         <i @click.stop="deleteSharedNote(item.id)" class="bi bi-x-circle pointer"></i>
                     </span>
