@@ -1,4 +1,5 @@
 <script>
+import Modal from '@/components/Modal.vue'
 import Accordion from '@/components/Accordion.vue'
 import HomeModals from '@/components/HomeModals.vue'
 import Note from '@/components/Note.vue'
@@ -8,6 +9,7 @@ import notesMixin from '@/mixins/notesMixin'
 import todoListsMixin from '@/mixins/todoListsMixin'
 import todoItemsMixin from '@/mixins/todoItemsMixin'
 import searchMixin from '@/mixins/searchMixin'
+import sharedNotesMixin from '@/mixins/sharedNotesMixin'
 
 export default {
     components: {
@@ -15,6 +17,7 @@ export default {
         HomeModals,
         Note,
         Todo,
+        Modal,
     },
 
     mixins: [
@@ -23,6 +26,15 @@ export default {
         todoListsMixin,
         todoItemsMixin,
         searchMixin,
+        sharedNotesMixin,
+    ],
+
+    props: {
+        notificationsCount: Number
+    },
+
+    emits: [
+        'updateNotificationsCount'
     ],
 
     data() {
@@ -100,6 +112,7 @@ export default {
     mounted() {
         document.title = 'Главная страница'
         this.getNotebooks()
+        this.getIncomingSharedNote()
     }
 }
 </script>
@@ -178,5 +191,24 @@ export default {
         @updateTodoList="updateTodoList"
         @deleteTodoList="deleteTodoList"
         @createTodoItem="createTodoItem"
-        @updateTodoItemBody="updateTodoItemBody"/>
+        @updateTodoItemBody="updateTodoItemBody"
+        @createSharedNote="createSharedNote"/>
+    
+        <modal
+            :id="'notificationsModal'"
+            :title="'Уведомления'">
+            <span v-if="notificationsCount === 0">Уведомлений нет</span>
+            <ul v-for="(item, index) in incomingSharedNotes" :key="item.id" class="list-group"
+                :class="{'mt-1': index !== 0}">
+                <li class="list-group-item list-group-item-action list-todo">
+                    <i class="bi bi-person"></i> <b>{{ item.owner_name }}</b> <i>({{ item.owner_login }})</i><br>
+                    Пользователь хочет поделиться с вами заметкой '{{ item.title }}'
+                    <span style="float:right;">
+                        <i @click.stop="$emit('updateSelectedTodoItem', item)" class="bi bi-check-circle pointer"></i>
+                        &nbsp;
+                        <i @click.stop="deleteSharedNote(item.id)" class="bi bi-x-circle pointer"></i>
+                    </span>
+                </li>
+            </ul>
+        </modal>
 </template>

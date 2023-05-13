@@ -11,18 +11,30 @@ export default {
     Navbar
   },
 
+  data() {
+    return {
+      notificationsCount: 0,
+    }
+  },
+
   mounted() {
     if (this.getAccessToken() === null) {
       this.$router.push({ name: 'sign-in' })
+    }
+  },
+
+  methods: {
+    updateNotificationsCount(count) {
+      this.notificationsCount = count
     }
   }
 }
 </script>
 
 <template>
-  <navbar></navbar>
+  <navbar :notificationsCount="notificationsCount"></navbar>
   <div class="app">
-    <router-view></router-view>
+    <router-view :notificationsCount="notificationsCount" @updateNotificationsCount="updateNotificationsCount"></router-view>
   </div>
   <div style="height: 10em;"></div>
 </template>

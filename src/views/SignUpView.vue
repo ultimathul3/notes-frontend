@@ -79,7 +79,7 @@ export default {
             
             this.setID(response.data.id)
             this.setName(this.name)
-            this.setLogin(this.login)
+            this.setLogin(this.login.toLowerCase())
             this.setTokens(response.data.access_token, response.data.refresh_token)
 
             this.$router.push({ name: 'home' })

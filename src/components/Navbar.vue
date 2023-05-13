@@ -9,6 +9,10 @@ export default {
     tokensMixin,
   ],
 
+  props: {
+    notificationsCount: Number
+  },
+
   methods: {
     async logout() {
       let refreshed = await this.refreshTokens()
@@ -46,10 +50,16 @@ export default {
               type="button"
               class="btn btn-outline-light dropdown-toggle me-2"
               data-bs-toggle="dropdown">
-              <i class="bi bi-person"></i> {{ getName() }} <i>({{ getLogin() }})</i>
+              <i class="bi bi-person"></i> {{ getName() }} <i>({{ getLogin() }})</i> <span v-if="notificationsCount !== 0" class="badge text-bg-secondary">{{ notificationsCount }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-dark">
-              <li><button class="dropdown-item pointer" type="button">Уведомления</button></li>
+              <li>
+                <button class="dropdown-item pointer" type="button"
+                  data-bs-toggle="modal"
+                  data-bs-target="#notificationsModal">
+                  Уведомления <span v-if="notificationsCount !== 0" class="badge text-bg-secondary">{{ notificationsCount }}</span>
+                </button>
+              </li>
               <li><hr class="dropdown-divider"></li>
               <li><button class="dropdown-item pointer" type="button" @click="logout">Выйти</button></li>
             </ul>

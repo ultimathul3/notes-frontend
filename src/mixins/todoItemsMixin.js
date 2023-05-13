@@ -49,6 +49,7 @@ export default {
 
             document.getElementById('createTodoItemModal-close-btn').click()
             this.errors = []
+            this.modalInput = ''
         },
 
         async updateTodoItemDone(itemID, done) {
@@ -85,6 +86,7 @@ export default {
 
             document.getElementById('updateTodoItemBodyModal-close-btn').click()
             this.errors = []
+            this.modalInput = ''
         },
 
         async deleteTodoItem(itemID) {

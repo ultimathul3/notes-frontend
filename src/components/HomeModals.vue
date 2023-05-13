@@ -27,6 +27,7 @@ export default {
         'deleteTodoList',
         'createTodoItem',
         'updateTodoItemBody',
+        'createSharedNote',
     ]
 }
 </script>
@@ -206,5 +207,24 @@ export default {
             @input="$emit('update:modelValue', $event.target.value)"
             type="text" class="form-control"
             placeholder="Содержимое элемента списка">
+    </modal>
+
+    <modal
+        @btnPressed="$emit('createSharedNote')"
+        :id="'shareNoteModal'"
+        :title="'Поделиться заметкой'"
+        :buttonText="'Поделиться заметкой'">
+        <ul class="list-group">
+            <li
+                v-for="(error, index) in errors" 
+                :class="{'mb-3': index == errors.length-1}"
+                class="list-group-item list-group-item-danger">
+                {{ error }}
+            </li>
+        </ul>
+        <input :value="modelValue" 
+            @input="$emit('update:modelValue', $event.target.value)"
+            type="text" class="form-control"
+            placeholder="Логин пользователя">
     </modal>
 </template>

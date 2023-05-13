@@ -31,6 +31,7 @@ export default {
             
             document.getElementById('createNoteModal-close-btn').click()
             this.errors = []
+            this.modalInput = ''
         },
 
         async updateNoteTitle() {
@@ -50,6 +51,7 @@ export default {
             
             document.getElementById('updateNoteTitleModal-close-btn').click()
             this.errors = []
+            this.modalInput = ''
         },
 
         async deleteNote() {

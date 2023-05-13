@@ -31,6 +31,7 @@ export default {
             
             document.getElementById('createTodoListModal-close-btn').click()
             this.errors = []
+            this.modalInput = ''
         },
 
 
@@ -51,6 +52,7 @@ export default {
             
             document.getElementById('updateTodoListModal-close-btn').click()
             this.errors = []
+            this.modalInput = ''
         },
 
         async deleteTodoList() {

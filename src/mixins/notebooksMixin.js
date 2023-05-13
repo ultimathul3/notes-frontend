@@ -82,6 +82,7 @@ export default {
             
             document.getElementById('createNotebookModal-close-btn').click()
             this.errors = []
+            this.modalInput = ''
         },
 
         async deleteNotebook() {
@@ -125,6 +126,7 @@ export default {
 
             document.getElementById('updateNotebookModal-close-btn').click()
             this.errors = []
+            this.modalInput = ''
         },
     }
 }

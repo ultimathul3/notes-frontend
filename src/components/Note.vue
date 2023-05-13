@@ -20,6 +20,12 @@ export default {
 
 <template>
     <textarea v-model="clickedNote.body" class="form-control" rows="10"></textarea>
+    <button type="button" class="btn btn-primary mt-2"
+        data-bs-toggle="modal"
+        data-bs-target="#shareNoteModal">
+        Поделиться
+    </button>
+    <br>
     <button @click="$emit('updateNoteBody')" type="button" class="btn btn-success mt-2">
         Сохранить
     </button>
