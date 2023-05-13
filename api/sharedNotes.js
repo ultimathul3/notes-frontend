@@ -12,8 +12,8 @@ export function createSharedNote(accessToken, login, noteID) {
     })
 }
 
-export function getIncomingSharedNote(accessToken) {
-    return axios.get(`${API_URL}/shared-notes/incoming`, {
+export function getAllSharedNotesInfo(accessToken) {
+    return axios.get(`${API_URL}/shared-notes/`, {
         headers: {
             'Authorization': 'Bearer ' + accessToken
         }

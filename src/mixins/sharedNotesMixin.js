@@ -1,5 +1,5 @@
 import tokensMixin from '@/mixins/tokensMixin'
-import { createSharedNote, getIncomingSharedNote, deleteSharedNote, acceptSharedNote } from '../../api/sharedNotes.js'
+import { createSharedNote, getAllSharedNotesInfo, deleteSharedNote, acceptSharedNote } from '../../api/sharedNotes.js'
 
 export default {
     mixins: [
@@ -9,6 +9,7 @@ export default {
     data() {
         return {
             incomingSharedNotes: [],
+            sharedNotes: [],
         }
     },
 
@@ -37,7 +38,7 @@ export default {
             this.modalInput = ''
         },
 
-        async getIncomingSharedNote() {
+        async getAllSharedNotesInfo() {
             let refreshed = await this.refreshTokens()
             if (!refreshed) {
                 return
@@ -45,13 +46,21 @@ export default {
 
             let response
             try {
-                response = await getIncomingSharedNote(this.getAccessToken())
+                response = await getAllSharedNotesInfo(this.getAccessToken())
             } catch(error) {
                 return
             }
 
-            if (response.data.incoming_shared_notes !== undefined) {
-                this.incomingSharedNotes = response.data.incoming_shared_notes
+            this.sharedNotes = []
+            this.incomingSharedNotes = []
+            if (response.data.shared_notes !== undefined) {
+                for (const note of response.data.shared_notes) {
+                    if (note.accepted) {
+                        this.sharedNotes.push(note)
+                    } else {
+                        this.incomingSharedNotes.push(note)
+                    }
+                }
                 this.$emit('updateNotificationsCount', this.incomingSharedNotes.length)
             }
         },
@@ -84,6 +93,7 @@ export default {
                 return
             }
 
+            this.sharedNotes.push(this.incomingSharedNotes.find(n => n.id === id))
             this.incomingSharedNotes = this.incomingSharedNotes.filter(n => n.id !== id)
             this.$emit('updateNotificationsCount', this.notificationsCount-1)
         },

@@ -8,6 +8,8 @@ export default {
         clickedTodoList: Object,
         searchMode: Boolean,
         emptySearch: Boolean,
+        sharedNotes: Object,
+        clickedSharedNote: Object,
     },
 
     emits: [
@@ -135,6 +137,32 @@ export default {
                     </div>
                 </div>
             </template>
+        </div>
+    
+        <div v-if="sharedNotes.length !== 0" class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    :data-bs-target="'#collapseShared'">
+                    Общий блокнот
+                </button>
+            </h2>
+            <div :id="'collapseShared'" class="accordion-collapse collapse">
+                <ul v-for="note in sharedNotes" :key="note.id" class="list-group m-2 pointer">
+                    <li @click="$emit('clickTodoList', notebook, todoList)"
+                        class="list-group-item list-group-item-action list-note"
+                        :class="{'active': note.id === clickedSharedNote?.id}"
+                        style="text-align:left;">
+                        {{ note.title }}
+                        <span style="float:right;">
+                            <i @click.stop="$emit('updateSelectedTodoList', notebook, todoList)"
+                                class="bi bi-x-circle"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteTodoListModal">
+                            </i>
+                        </span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 

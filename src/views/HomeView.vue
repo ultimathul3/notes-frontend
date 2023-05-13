@@ -48,6 +48,7 @@ export default {
             selectedTodoList: undefined,
             clickedTodoList: undefined,
             selectedTodoItem: undefined,
+            clickedSharedNote: undefined,
             searchMode: false,
             emptySearch: false,
         }
@@ -112,7 +113,7 @@ export default {
     mounted() {
         document.title = 'Главная страница'
         this.getNotebooks()
-        this.getIncomingSharedNote()
+        this.getAllSharedNotesInfo()
     }
 }
 </script>
@@ -145,6 +146,8 @@ export default {
                     :clickedTodoList="clickedTodoList"
                     :searchMode="searchMode"
                     :emptySearch="emptySearch"
+                    :sharedNotes="sharedNotes"
+                    :clickedSharedNote="clickedSharedNote"
                     @updateSelectedNotebook="updateSelectedNotebook"
                     @updateSelectedNote="updateSelectedNote"
                     @clickNote="clickNote"
