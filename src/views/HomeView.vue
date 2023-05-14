@@ -3,6 +3,7 @@ import Modal from '@/components/Modal.vue'
 import Accordion from '@/components/Accordion.vue'
 import HomeModals from '@/components/HomeModals.vue'
 import Note from '@/components/Note.vue'
+import SharedNote from '@/components/SharedNote.vue'
 import Todo from '@/components/Todo.vue'
 import notebooksMixin from '@/mixins/notebooksMixin'
 import notesMixin from '@/mixins/notesMixin'
@@ -16,6 +17,7 @@ export default {
         Accordion,
         HomeModals,
         Note,
+        SharedNote,
         Todo,
         Modal,
     },
@@ -72,6 +74,7 @@ export default {
 
         clickNote(notebook, note) {
             this.clickedTodoList = undefined
+            this.clickedSharedNote = undefined
             this.selectedNotebook = notebook
             this.clickedNote = note
             window.scrollTo(0, 0)
@@ -85,6 +88,7 @@ export default {
 
         async clickTodoList(notebook, todoList) {
             this.clickedNote = undefined
+            this.clickedSharedNote = undefined
             this.selectedNotebook = notebook
             this.clickedTodoList = todoList
             window.scrollTo(0, 0)
@@ -107,6 +111,14 @@ export default {
             this.$refs.accordion.collapseAccordion()
             this.searchMode = false
             this.searchQuery = ''
+        },
+
+        async clickSharedNote(sharedNote) {
+            this.clickedNote = undefined
+            this.clickedTodoList = undefined
+            this.clickedSharedNote = sharedNote
+            window.scrollTo(0, 0)
+            await this.getSharedNoteData()
         },
     },
 
@@ -152,7 +164,8 @@ export default {
                     @updateSelectedNote="updateSelectedNote"
                     @clickNote="clickNote"
                     @updateSelectedTodoList="updateSelectedTodoList"
-                    @clickTodoList="clickTodoList"/>
+                    @clickTodoList="clickTodoList"
+                    @clickSharedNote="clickSharedNote"/>
 
                 <div class="row justify-content-center mt-2" v-if="!searchMode">
                     <button @click="modalInput=''" type="button" class="btn btn-success"
@@ -167,6 +180,10 @@ export default {
                 <note 
                     @updateNoteBody="updateNoteBody"
                     :clickedNote="clickedNote"/>
+            </div>
+
+            <div v-if="clickedSharedNote !== undefined" class="col">
+                <shared-note :clickedSharedNote="clickedSharedNote"/>
             </div>
             
             <div v-if="clickedTodoList !== undefined" class="col">

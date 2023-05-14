@@ -18,6 +18,7 @@ export default {
         'clickNote',
         'updateSelectedTodoList',
         'clickTodoList',
+        'clickSharedNote',
     ],
 
     components: {
@@ -148,7 +149,7 @@ export default {
             </h2>
             <div :id="'collapseShared'" class="accordion-collapse collapse">
                 <ul v-for="note in sharedNotes" :key="note.id" class="list-group m-2 pointer">
-                    <li @click="$emit('clickTodoList', notebook, todoList)"
+                    <li @click="$emit('clickSharedNote', note)"
                         class="list-group-item list-group-item-action list-note"
                         :class="{'active': note.id === clickedSharedNote?.id}"
                         style="text-align:left;">

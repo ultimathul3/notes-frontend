@@ -1,5 +1,5 @@
 import tokensMixin from '@/mixins/tokensMixin'
-import { createSharedNote, getAllSharedNotesInfo, deleteSharedNote, acceptSharedNote } from '../../api/sharedNotes.js'
+import { createSharedNote, getAllSharedNotesInfo, deleteSharedNote, acceptSharedNote, getSharedNoteData } from '../../api/sharedNotes.js'
 
 export default {
     mixins: [
@@ -96,6 +96,24 @@ export default {
             this.sharedNotes.push(this.incomingSharedNotes.find(n => n.id === id))
             this.incomingSharedNotes = this.incomingSharedNotes.filter(n => n.id !== id)
             this.$emit('updateNotificationsCount', this.notificationsCount-1)
+        },
+
+        async getSharedNoteData() {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
+                return
+            }
+
+            let response
+            try {
+                response = await getSharedNoteData(this.getAccessToken(), this.clickedSharedNote.id)
+            } catch(error) {
+                return
+            }
+
+            this.clickedSharedNote.body = response.data.body
+            this.clickedSharedNote.created_at = response.data.created_at
+            this.clickedSharedNote.updated_at = response.data.updated_at
         },
     }
 }
