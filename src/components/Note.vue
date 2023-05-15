@@ -8,6 +8,7 @@ export default {
 
     emits: [
         'updateNoteBody',
+        'getOutgoingSharedNotes',
     ],
 
     methods: {
@@ -24,6 +25,13 @@ export default {
         data-bs-toggle="modal"
         data-bs-target="#shareNoteModal">
         Поделиться
+    </button>
+    &nbsp;
+    <button type="button" class="btn btn-info mt-2"
+        @click="$emit('getOutgoingSharedNotes', clickedNote.id)"
+        data-bs-toggle="modal"
+        data-bs-target="#outgoingNotesModal">
+        <i class="bi bi-person"></i>
     </button>
     <br>
     <button @click="$emit('updateNoteBody')" type="button" class="btn btn-success mt-2">

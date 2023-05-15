@@ -43,3 +43,11 @@ export function getSharedNoteData(accessToken, sharedNoteID) {
         }
     })
 }
+
+export function getOutgoingSharedNotes(accessToken, noteID) {
+    return axios.get(`${API_URL}/shared-notes/outgoing/${noteID}`, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+}

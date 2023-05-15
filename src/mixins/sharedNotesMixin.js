@@ -1,5 +1,5 @@
 import tokensMixin from '@/mixins/tokensMixin'
-import { createSharedNote, getAllSharedNotesInfo, deleteSharedNote, acceptSharedNote, getSharedNoteData } from '../../api/sharedNotes.js'
+import { createSharedNote, getAllSharedNotesInfo, deleteSharedNote, acceptSharedNote, getSharedNoteData, getOutgoingSharedNotes } from '../../api/sharedNotes.js'
 
 export default {
     mixins: [
@@ -9,6 +9,7 @@ export default {
     data() {
         return {
             incomingSharedNotes: [],
+            outgoingSharedNotes: [],
             sharedNotes: [],
         }
     },
@@ -78,7 +79,8 @@ export default {
             }
 
             this.incomingSharedNotes = this.incomingSharedNotes.filter(n => n.id !== id)
-            this.$emit('updateNotificationsCount', this.notificationsCount-1)
+            this.outgoingSharedNotes = this.outgoingSharedNotes.filter(n => n.id !== id)
+            this.$emit('updateNotificationsCount', this.incomingSharedNotes.length)
         },
 
         async acceptSharedNote(id) {
@@ -95,7 +97,7 @@ export default {
 
             this.sharedNotes.push(this.incomingSharedNotes.find(n => n.id === id))
             this.incomingSharedNotes = this.incomingSharedNotes.filter(n => n.id !== id)
-            this.$emit('updateNotificationsCount', this.notificationsCount-1)
+            this.$emit('updateNotificationsCount', this.incomingSharedNotes.length)
         },
 
         async getSharedNoteData() {
@@ -114,6 +116,24 @@ export default {
             this.clickedSharedNote.body = response.data.body
             this.clickedSharedNote.created_at = response.data.created_at
             this.clickedSharedNote.updated_at = response.data.updated_at
+        },
+
+        async getOutgoingSharedNotes(id) {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
+                return
+            }
+
+            let response
+            try {
+                response = await getOutgoingSharedNotes(this.getAccessToken(), id)
+            } catch(error) {
+                return
+            }
+
+            if (response.data.shared_notes !== undefined) {
+                this.outgoingSharedNotes = response.data.shared_notes
+            }
         },
     }
 }

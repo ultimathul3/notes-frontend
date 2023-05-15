@@ -11,6 +11,9 @@ export default {
     props: [
         'modelValue',
         'errors',
+        'notificationsCount',
+        'incomingSharedNotes',
+        'outgoingSharedNotes',
     ],
 
     emits: [
@@ -28,6 +31,8 @@ export default {
         'createTodoItem',
         'updateTodoItemBody',
         'createSharedNote',
+        'acceptSharedNote',
+        'deleteSharedNote',
     ]
 }
 </script>
@@ -226,5 +231,38 @@ export default {
             @input="$emit('update:modelValue', $event.target.value)"
             type="text" class="form-control"
             placeholder="Логин пользователя">
+    </modal>
+
+    <modal
+        :id="'notificationsModal'"
+        :title="'Уведомления'">
+        <span v-if="notificationsCount === 0">Уведомлений нет</span>
+        <ul v-for="(item, index) in incomingSharedNotes" :key="item.id" class="list-group"
+            :class="{'mt-1': index !== 0}">
+            <li class="list-group-item list-group-item-action list-todo">
+                <i class="bi bi-person"></i> <b>{{ item.owner_name }}</b> <i>({{ item.owner_login }})</i><br>
+                Пользователь хочет поделиться с вами заметкой '{{ item.title }}'
+                <span style="float:right;">
+                    <i @click.stop="$emit('acceptSharedNote', item.id)" class="bi bi-check-circle pointer"></i>
+                    &nbsp;
+                    <i @click.stop="$emit('deleteSharedNote', item.id)" class="bi bi-x-circle pointer"></i>
+                </span>
+            </li>
+        </ul>
+    </modal>
+
+    <modal
+        :id="'outgoingNotesModal'"
+        :title="'Пользователи, с кем вы поделились'">
+        <span v-if="outgoingSharedNotes.length === 0">Ни один пользователь не принял эту заметку</span>
+        <ul v-for="(item, index) in outgoingSharedNotes" :key="item.id" class="list-group"
+            :class="{'mt-1': index !== 0}">
+            <li class="list-group-item list-group-item-action list-todo">
+                <i class="bi bi-person"></i> <b>{{ item.recipient_name }}</b> <i>({{ item.recipient_login }})</i>
+                <span style="float:right;">
+                    <i @click.stop="$emit('deleteSharedNote', item.id)" class="bi bi-x-circle pointer"></i>
+                </span>
+            </li>
+        </ul>
     </modal>
 </template>
