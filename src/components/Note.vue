@@ -1,7 +1,13 @@
 <script>
 import dateFormat from 'dateformat'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 export default {
+    components: {
+        QuillEditor,
+    },
+
     props: {
         clickedNote: Object,
     },
@@ -20,7 +26,7 @@ export default {
 </script>
 
 <template>
-    <textarea v-model="clickedNote.body" class="form-control" rows="10"></textarea>
+    <QuillEditor :toolbar="['bold', 'italic', 'underline', 'blockquote', 'image', 'link', 'code-block']" v-model:content="clickedNote.body" :contentType="'html'"/>
     <button type="button" class="btn btn-primary mt-2"
         data-bs-toggle="modal"
         data-bs-target="#shareNoteModal">
@@ -44,3 +50,12 @@ export default {
         Обновлено: {{ formatDatetime(clickedNote.updated_at) }}
     </div>
 </template>
+
+<style>
+.ql-container {
+    font-size: 18px;
+}
+.ql-snow .ql-tooltip {
+    z-index: 999;
+}
+</style>
