@@ -14,11 +14,12 @@ export default {
         'deleteTodoItem',
         'updateSelectedTodoItem',
         'updateTodoItemBody',
+        'getOutgoingSharedTodoLists',
     ],
 
     methods: {
         formatDatetime(datetime) {
-            return dateFormat(datetime, 'dd.mm.yyyy, HH:MM:ss')
+            return dateFormat(datetime, 'dd.mm.yy, HH:MM:ss')
         }
     }
 }
@@ -48,6 +49,20 @@ export default {
             </span>
         </li>
     </ul>
+
+    <button type="button" class="btn btn-primary mt-2"
+        data-bs-toggle="modal"
+        data-bs-target="#shareTodoListModal">
+        Поделиться
+    </button>
+    &nbsp;
+    <button type="button" class="btn btn-info mt-2"
+        @click="$emit('getOutgoingSharedTodoLists', clickedTodoList.id)"
+        data-bs-toggle="modal"
+        data-bs-target="#outgoingTodoListsModal">
+        <i class="bi bi-person"></i>
+    </button>
+    <br>
     
     <button
         @click="$emit('update:modelValue', '')"

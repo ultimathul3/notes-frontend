@@ -19,7 +19,7 @@ export default {
 
     methods: {
         formatDatetime(datetime) {
-            return dateFormat(datetime, 'dd.mm.yyyy, HH:MM:ss')
+            return dateFormat(datetime, 'dd.mm.yy, HH:MM:ss')
         }
     }
 }

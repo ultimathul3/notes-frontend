@@ -28,9 +28,10 @@ export default {
                     this.errors = ['Пользователь не найден']
                 } else if (error.response.data.message.includes('impossible to share')) {
                     this.errors = ['Невозможно поделиться заметкой с самим собой']
-                } else if (error.response.data.message.includes('already shared')) {
+                } else if (error.response.data.message.includes('already been shared')) {
                     this.errors = ['Вы уже поделились заметкой с этим пользователем']
                 }
+                console.log(this.errors)
                 return
             }
 
@@ -62,7 +63,7 @@ export default {
                         this.incomingSharedNotes.push(note)
                     }
                 }
-                this.$emit('updateNotificationsCount', this.incomingSharedNotes.length)
+                this.$emit('updateNotificationsCount', this.incomingSharedTodoLists.length + this.incomingSharedNotes.length)
             }
         },
 
@@ -80,7 +81,12 @@ export default {
 
             this.incomingSharedNotes = this.incomingSharedNotes.filter(n => n.id !== id)
             this.outgoingSharedNotes = this.outgoingSharedNotes.filter(n => n.id !== id)
-            this.$emit('updateNotificationsCount', this.incomingSharedNotes.length)
+            this.sharedNotes = this.sharedNotes.filter(n => n.id !== id)
+            if (this.clickedSharedNote?.id == id) {
+                this.clickedSharedNote = undefined
+            }
+            this.$emit('updateNotificationsCount', this.incomingSharedTodoLists.length + this.incomingSharedNotes.length)
+            document.getElementById('deleteSharedNoteModal-close-btn').click()
         },
 
         async acceptSharedNote(id) {
@@ -97,7 +103,7 @@ export default {
 
             this.sharedNotes.push(this.incomingSharedNotes.find(n => n.id === id))
             this.incomingSharedNotes = this.incomingSharedNotes.filter(n => n.id !== id)
-            this.$emit('updateNotificationsCount', this.incomingSharedNotes.length)
+            this.$emit('updateNotificationsCount', this.incomingSharedTodoLists.length + this.incomingSharedNotes.length)
         },
 
         async getSharedNoteData() {

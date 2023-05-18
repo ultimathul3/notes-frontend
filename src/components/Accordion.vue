@@ -10,6 +10,8 @@ export default {
         emptySearch: Boolean,
         sharedNotes: Object,
         clickedSharedNote: Object,
+        sharedTodoLists: Object,
+        clickedSharedTodoList: Object,
     },
 
     emits: [
@@ -19,6 +21,9 @@ export default {
         'updateSelectedTodoList',
         'clickTodoList',
         'clickSharedNote',
+        'clickSharedTodoList',
+        'updateSelectedSharedNote',
+        'updateSelectedSharedTodoList',
     ],
 
     components: {
@@ -140,7 +145,7 @@ export default {
             </template>
         </div>
     
-        <div v-if="sharedNotes.length !== 0" class="accordion-item">
+        <div v-if="sharedNotes.length !== 0 || sharedTodoLists.length !== 0" class="accordion-item">
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                     :data-bs-target="'#collapseShared'">
@@ -155,10 +160,25 @@ export default {
                         style="text-align:left;">
                         {{ note.title }}
                         <span style="float:right;">
-                            <i @click.stop="$emit('updateSelectedTodoList', notebook, todoList)"
+                            <i @click.stop="$emit('updateSelectedSharedNote', note)"
                                 class="bi bi-x-circle"
                                 data-bs-toggle="modal"
-                                data-bs-target="#deleteTodoListModal">
+                                data-bs-target="#deleteSharedNoteModal">
+                            </i>
+                        </span>
+                    </li>
+                </ul>
+                <ul v-for="list in sharedTodoLists" :key="list.id" class="list-group m-2 pointer">
+                    <li @click="$emit('clickSharedTodoList', list)"
+                        class="list-group-item list-group-item-action list-todo"
+                        :class="{'active': list.id === clickedSharedTodoList?.id}"
+                        style="text-align:left;">
+                        {{ list.title }}
+                        <span style="float:right;">
+                            <i @click.stop="$emit('updateSelectedSharedTodoList', list)"
+                                class="bi bi-x-circle"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteSharedTodoListModal">
                             </i>
                         </span>
                     </li>

@@ -5,12 +5,14 @@ import HomeModals from '@/components/HomeModals.vue'
 import Note from '@/components/Note.vue'
 import SharedNote from '@/components/SharedNote.vue'
 import Todo from '@/components/Todo.vue'
+import SharedTodoList from '@/components/SharedTodo.vue'
 import notebooksMixin from '@/mixins/notebooksMixin'
 import notesMixin from '@/mixins/notesMixin'
 import todoListsMixin from '@/mixins/todoListsMixin'
 import todoItemsMixin from '@/mixins/todoItemsMixin'
 import searchMixin from '@/mixins/searchMixin'
 import sharedNotesMixin from '@/mixins/sharedNotesMixin'
+import sharedTodoListsMixin from '@/mixins/sharedTodoListsMixin'
 
 export default {
     components: {
@@ -20,6 +22,7 @@ export default {
         SharedNote,
         Todo,
         Modal,
+        SharedTodoList,
     },
 
     mixins: [
@@ -29,6 +32,7 @@ export default {
         todoItemsMixin,
         searchMixin,
         sharedNotesMixin,
+        sharedTodoListsMixin,
     ],
 
     props: {
@@ -51,6 +55,9 @@ export default {
             clickedTodoList: undefined,
             selectedTodoItem: undefined,
             clickedSharedNote: undefined,
+            clickedSharedTodoList: undefined, 
+            selectedSharedNote: undefined,
+            selectedSharedTodoList: undefined,
             searchMode: false,
             emptySearch: false,
         }
@@ -75,6 +82,7 @@ export default {
         clickNote(notebook, note) {
             this.clickedTodoList = undefined
             this.clickedSharedNote = undefined
+            this.clickedSharedTodoList = undefined
             this.selectedNotebook = notebook
             this.clickedNote = note
             window.scrollTo(0, 0)
@@ -89,6 +97,7 @@ export default {
         async clickTodoList(notebook, todoList) {
             this.clickedNote = undefined
             this.clickedSharedNote = undefined
+            this.clickedSharedTodoList = undefined
             this.selectedNotebook = notebook
             this.clickedTodoList = todoList
             window.scrollTo(0, 0)
@@ -116,9 +125,27 @@ export default {
         async clickSharedNote(sharedNote) {
             this.clickedNote = undefined
             this.clickedTodoList = undefined
+            this.clickedSharedTodoList = undefined
             this.clickedSharedNote = sharedNote
             window.scrollTo(0, 0)
             await this.getSharedNoteData()
+        },
+
+        async clickSharedTodoList(sharedTodoList) {
+            this.clickedNote = undefined
+            this.clickedTodoList = undefined
+            this.clickedSharedNote = undefined
+            this.clickedSharedTodoList = sharedTodoList
+            window.scrollTo(0, 0)
+            await this.getSharedTodoListData()
+        },
+
+        updateSelectedSharedNote(note) {
+            this.selectedSharedNote = note
+        },
+
+        updateSelectedSharedTodoList(todoList) {
+            this.selectedSharedTodoList = todoList
         },
     },
 
@@ -126,6 +153,7 @@ export default {
         document.title = 'Главная страница'
         this.getNotebooks()
         this.getAllSharedNotesInfo()
+        this.getAllSharedTodoListsInfo()
     }
 }
 </script>
@@ -160,12 +188,17 @@ export default {
                     :emptySearch="emptySearch"
                     :sharedNotes="sharedNotes"
                     :clickedSharedNote="clickedSharedNote"
+                    :sharedTodoLists="sharedTodoLists"
+                    :clickedSharedTodoList="clickedSharedTodoList"
                     @updateSelectedNotebook="updateSelectedNotebook"
                     @updateSelectedNote="updateSelectedNote"
                     @clickNote="clickNote"
                     @updateSelectedTodoList="updateSelectedTodoList"
                     @clickTodoList="clickTodoList"
-                    @clickSharedNote="clickSharedNote"/>
+                    @clickSharedNote="clickSharedNote"
+                    @clickSharedTodoList="clickSharedTodoList"
+                    @updateSelectedSharedNote="updateSelectedSharedNote"
+                    @updateSelectedSharedTodoList="updateSelectedSharedTodoList"/>
 
                 <div class="row justify-content-center mt-2" v-if="!searchMode">
                     <button @click="modalInput=''" type="button" class="btn btn-success"
@@ -186,6 +219,10 @@ export default {
             <div v-if="clickedSharedNote !== undefined" class="col">
                 <shared-note :clickedSharedNote="clickedSharedNote"/>
             </div>
+
+            <div v-if="clickedSharedTodoList !== undefined" class="col">
+                <shared-todo-list :clickedSharedTodoList="clickedSharedTodoList"/>
+            </div>
             
             <div v-if="clickedTodoList !== undefined" class="col">
                 <todo
@@ -193,6 +230,7 @@ export default {
                     @deleteTodoItem="deleteTodoItem"
                     @updateSelectedTodoItem="updateSelectedTodoItem"
                     @updateTodoItemBody="updateTodoItemBody"
+                    @getOutgoingSharedTodoLists="getOutgoingSharedTodoLists"
                     :clickedTodoList="clickedTodoList"
                     v-model="modalInput"/>
             </div>
@@ -203,8 +241,12 @@ export default {
         v-model="modalInput"
         :errors="errors"
         :incomingSharedNotes="incomingSharedNotes"
+        :incomingSharedTodoLists="incomingSharedTodoLists"
         :notificationsCount="notificationsCount"
         :outgoingSharedNotes="outgoingSharedNotes"
+        :outgoingSharedTodoLists="outgoingSharedTodoLists"
+        :selectedSharedNote="selectedSharedNote"
+        :selectedSharedTodoList="selectedSharedTodoList"
         @deleteNotebook="deleteNotebook"
         @createNotebook="createNotebook"
         @updateNotebook="updateNotebook"
@@ -218,5 +260,8 @@ export default {
         @updateTodoItemBody="updateTodoItemBody"
         @createSharedNote="createSharedNote"
         @acceptSharedNote="acceptSharedNote"
-        @deleteSharedNote="deleteSharedNote"/>
+        @deleteSharedNote="deleteSharedNote"
+        @createSharedTodoList="createSharedTodoList"
+        @acceptSharedTodoList="acceptSharedTodoList"
+        @deleteSharedTodoList="deleteSharedTodoList"/>
 </template>
