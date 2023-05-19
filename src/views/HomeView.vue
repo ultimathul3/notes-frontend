@@ -117,6 +117,8 @@ export default {
 
         async cancelSearch() {
             await this.getNotebooks()
+            await this.getAllSharedNotesInfo()
+            await this.getAllSharedTodoListsInfo()
             this.$refs.accordion.collapseAccordion()
             this.searchMode = false
             this.searchQuery = ''

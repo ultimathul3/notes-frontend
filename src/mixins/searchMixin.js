@@ -31,9 +31,19 @@ export default {
                 })
             }
 
+            this.sharedNotes = []
+            if (response.data.shared_notes !== undefined) {
+                this.sharedNotes = response.data.shared_notes
+            }
+
+            this.sharedTodoLists = []
+            if (response.data.shared_todo_lists !== undefined) {
+                this.sharedTodoLists = response.data.shared_todo_lists
+            }
+
             this.emptySearch = true
             for (const notebook of this.notebooks) {
-                if (notebook.notes.length != 0 || notebook.todo_lists.length != 0) {
+                if (notebook.notes.length != 0 || notebook.todo_lists.length != 0 || this.sharedNotes.length != 0 || this.sharedTodoLists.length != 0) {
                     this.emptySearch = false
                     break
                 }
