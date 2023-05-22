@@ -37,6 +37,10 @@ export default {
             </span>
         </li>
     </ul>
+
+    <br>
+    <i class="bi bi-person"></i> <b>{{ clickedSharedTodoList.owner_name }}</b> <i>({{ clickedSharedTodoList.owner_login }})</i>
+    <br>
     
     <div class="mt-4">
         Создано: {{ formatDatetime(clickedSharedTodoList.created_at) }}

@@ -27,10 +27,14 @@ export default {
 
 <template>
     <QuillEditor :toolbar="['bold', 'italic', 'underline', 'blockquote', 'image', 'link', 'code-block']" v-model:content="clickedNote.body" :contentType="'html'"/>
+    <button @click="$emit('updateNoteBody')" type="button" class="btn btn-success mt-2">
+        Сохранить
+    </button>
+    &nbsp;
     <button type="button" class="btn btn-primary mt-2"
         data-bs-toggle="modal"
         data-bs-target="#shareNoteModal">
-        Поделиться
+        <i class="bi bi-share-fill"></i>
     </button>
     &nbsp;
     <button type="button" class="btn btn-info mt-2"
@@ -38,10 +42,6 @@ export default {
         data-bs-toggle="modal"
         data-bs-target="#outgoingNotesModal">
         <i class="bi bi-person"></i>
-    </button>
-    <br>
-    <button @click="$emit('updateNoteBody')" type="button" class="btn btn-success mt-2">
-        Сохранить
     </button>
     <br>
     <div class="mt-4">

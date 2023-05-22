@@ -1,5 +1,5 @@
 import tokensMixin from '@/mixins/tokensMixin'
-import { searchByTitle } from '../../api/search.js'
+import { searchByTitle, advancedSearch } from '../../api/search.js'
 import { getNotebooks } from '../../api/notebooks.js'
 
 export default {
@@ -88,6 +88,47 @@ export default {
             this.searchResponseToNotebooks(response, searchNotebooks)
 
             this.$refs.accordion.expandAccordion()
-        }
+        },
+
+        async advancedSearch(notes, sharedNotes, lists, sharedLists, createDates, updateDates) {
+            let refreshed = await this.refreshTokens()
+            if (!refreshed) {
+                return
+            }
+
+            let response
+            try {
+                response = await getNotebooks(this.getAccessToken())
+            } catch(error) {
+                return
+            }
+
+            this.searchMode = true
+            
+            if (response.data.notebooks === undefined) {
+                this.notebooks = []
+                return
+            }
+
+            let searchNotebooks = {}
+            for (const notebook of response.data.notebooks) {
+                searchNotebooks[notebook.id] = { 
+                    description: notebook.description,
+                    notes: [], 
+                    todo_lists: []
+                }
+            }
+
+            try {
+                response = await advancedSearch(this.getAccessToken(), this.modalInput, notes, sharedNotes, lists, sharedLists, createDates, updateDates)
+            } catch(error) {
+                return
+            }
+
+            this.searchResponseToNotebooks(response, searchNotebooks)
+
+            document.getElementById('searchModal-close-btn').click()
+            this.$refs.accordion.expandAccordion()
+        },
     }
 }

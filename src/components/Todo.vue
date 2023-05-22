@@ -49,20 +49,6 @@ export default {
             </span>
         </li>
     </ul>
-
-    <button type="button" class="btn btn-primary mt-2"
-        data-bs-toggle="modal"
-        data-bs-target="#shareTodoListModal">
-        Поделиться
-    </button>
-    &nbsp;
-    <button type="button" class="btn btn-info mt-2"
-        @click="$emit('getOutgoingSharedTodoLists', clickedTodoList.id)"
-        data-bs-toggle="modal"
-        data-bs-target="#outgoingTodoListsModal">
-        <i class="bi bi-person"></i>
-    </button>
-    <br>
     
     <button
         @click="$emit('update:modelValue', '')"
@@ -71,6 +57,19 @@ export default {
         type="button" 
         class="btn btn-success mt-2">
         Добавить
+    </button>
+    &nbsp;
+    <button type="button" class="btn btn-primary mt-2"
+        data-bs-toggle="modal"
+        data-bs-target="#shareTodoListModal">
+        <i class="bi bi-share-fill"></i>
+    </button>
+    &nbsp;
+    <button type="button" class="btn btn-info mt-2"
+        @click="$emit('getOutgoingSharedTodoLists', clickedTodoList.id)"
+        data-bs-toggle="modal"
+        data-bs-target="#outgoingTodoListsModal">
+        <i class="bi bi-person"></i>
     </button>
     
     <br>

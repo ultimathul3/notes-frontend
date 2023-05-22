@@ -1,11 +1,15 @@
 <script>
 import Modal from '@/components/Modal.vue'
+import VueDatePicker from '@vuepic/vue-datepicker'
+import '@vuepic/vue-datepicker/dist/main.css'
+import { format } from 'date-fns'
 
 export default {
     name: 'home-modals',
 
     components: {
         Modal,
+        VueDatePicker,
     },
 
     props: [
@@ -40,7 +44,24 @@ export default {
         'createSharedTodoList',
         'acceptSharedTodoList',
         'deleteSharedTodoList',
-    ]
+        'advancedSearch',
+    ],
+
+    data() {
+        return {
+            createDates: [],
+            updateDates: [],
+            notes: true,
+            sharedNotes: true,
+            lists: true,
+            sharedLists: true,
+            format: (dates) => {
+                const start = format(dates[0], 'dd.MM.yy HH:mm')
+                const end = format(dates[1], 'dd.MM.yy HH:mm')
+                return `${start} - ${end}`
+            }
+        }
+    }
 }
 </script>
 
@@ -276,7 +297,7 @@ export default {
         <span v-if="outgoingSharedNotes.length === 0">Ни один пользователь не принял эту заметку</span>
         <ul v-for="(note, index) in outgoingSharedNotes" :key="note.id" class="list-group"
             :class="{'mt-1': index !== 0}">
-            <li class="list-group-item list-group-item-action list-todo">
+            <li class="list-group-item list-group-item-action list-note">
                 <i class="bi bi-person"></i> <b>{{ note.recipient_name }}</b> <i>({{ note.recipient_login }})</i>
                 <span style="float:right;">
                     <i @click.stop="$emit('deleteSharedNote', note.id)" class="bi bi-x-circle pointer"></i>
@@ -334,6 +355,67 @@ export default {
         :title="'Удаление списка'"
         :buttonText="'Удалить'">
         Список будет удален. Вы хотите продолжить?
+    </modal>
+
+    <modal
+        @btnPressed="$emit('advancedSearch', notes, sharedNotes, lists, sharedLists, createDates, updateDates)"
+        :id="'searchModal'"
+        :title="'Расширенный поиск'"
+        :buttonText="'Найти'">
+        <input :value="modelValue" 
+            @input="$emit('update:modelValue', $event.target.value)"
+            type="text" class="form-control"
+            placeholder="Поиск...">
+        <ul class="list-group mt-2">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" v-model="notes" id="check1" checked>
+                            <label class="form-check-label" for="check1">
+                                Заметки
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" v-model="sharedNotes" id="check2" checked>
+                            <label class="form-check-label" for="check2">
+                                Общие заметки
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" v-model="lists" id="check3" checked>
+                            <label class="form-check-label" for="check3">
+                                Списки
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" v-model="sharedLists" id="check4" checked>
+                            <label class="form-check-label" for="check4">
+                                Общие списки
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                Время создания:
+                <div class="row">
+                    <VueDatePicker v-model="createDates" auto-apply :format="format" locale="ru" teleport-center range />
+                </div>
+                Время обновления:
+                <div class="row">
+                    <VueDatePicker v-model="updateDates" auto-apply :format="format" locale="ru" teleport-center range />
+                </div>
+            </li>
+        </ul>
     </modal>
 </template>
 

@@ -86,6 +86,9 @@ export default {
             this.selectedNotebook = notebook
             this.clickedNote = note
             window.scrollTo(0, 0)
+            if (this.clickedNote.body === '') {
+                this.clickedNote.body = '<html></html>'
+            }
         },
 
         updateSelectedTodoList(notebook, todoList) {
@@ -173,6 +176,13 @@ export default {
                     <div v-if="searchMode" class="col-auto ps-0">
                         <button class="btn btn-danger" @click="cancelSearch">
                             <i class="bi bi-x-circle"></i>
+                        </button>
+                    </div>
+                    <div class="col-auto ps-0">
+                        <button class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#searchModal">
+                            <i class="bi bi-three-dots"></i>
                         </button>
                     </div>
                     <div class="col-auto ps-0">
@@ -265,5 +275,6 @@ export default {
         @deleteSharedNote="deleteSharedNote"
         @createSharedTodoList="createSharedTodoList"
         @acceptSharedTodoList="acceptSharedTodoList"
-        @deleteSharedTodoList="deleteSharedTodoList"/>
+        @deleteSharedTodoList="deleteSharedTodoList"
+        @advancedSearch="advancedSearch"/>
 </template>
