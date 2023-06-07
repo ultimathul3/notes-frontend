@@ -26,7 +26,7 @@ export default {
 </script>
 
 <template>
-    <QuillEditor :toolbar="['bold', 'italic', 'underline', 'blockquote', 'image', 'link', 'code-block']" v-model:content="clickedNote.body" :contentType="'html'"/>
+    <QuillEditor :toolbar="['bold', 'italic', 'underline', 'strike', 'blockquote', 'image', 'link', 'code-block']" v-model:content="clickedNote.body" :contentType="'html'"/>
     <button @click="$emit('updateNoteBody')" type="button" class="btn btn-success mt-2">
         Сохранить
     </button>
