@@ -6,3 +6,9 @@ services:
     ports:
       - 4173:4173
     container_name: notes_frontend
+    networks:
+      - notes-network
+
+networks:
+  notes-network:
+    external: true
