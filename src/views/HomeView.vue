@@ -154,11 +154,11 @@ export default {
         },
     },
 
-    mounted() {
+    async mounted() {
         document.title = 'Главная страница'
-        this.getNotebooks()
-        this.getAllSharedNotesInfo()
-        this.getAllSharedTodoListsInfo()
+        await this.getNotebooks()
+        await this.getAllSharedNotesInfo()
+        await this.getAllSharedTodoListsInfo()
     }
 }
 </script>
