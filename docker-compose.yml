@@ -8,6 +8,7 @@ services:
     container_name: notes_frontend
     networks:
       - notes-network
+    restart: always
 
 networks:
   notes-network:
