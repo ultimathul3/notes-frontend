@@ -141,6 +141,8 @@ export default {
 
             if (response.data.shared_todo_lists !== undefined) {
                 this.outgoingSharedTodoLists = response.data.shared_todo_lists
+            } else {
+                this.outgoingSharedNotes = []
             }
         },
     }

@@ -139,6 +139,8 @@ export default {
 
             if (response.data.shared_notes !== undefined) {
                 this.outgoingSharedNotes = response.data.shared_notes
+            } else {
+                this.outgoingSharedNotes = []
             }
         },
     }
